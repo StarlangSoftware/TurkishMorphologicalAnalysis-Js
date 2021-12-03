@@ -1,0 +1,30 @@
+{
+  "name": "nlptoolkit-morphologicalanalysis",
+  "version": "1.0.0",
+  "description": "Turkish Morphological Analysis Library",
+  "main": "index.js",
+  "scripts": {
+    "test": "Mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/StarlangSoftware/TurkishMorphologicalAnalysis-Js.git"
+  },
+  "author": "Olcay Taner Yıldız",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/StarlangSoftware/TurkishMorphologicalAnalysis-Js/issues"
+  },
+  "homepage": "https://github.com/StarlangSoftware/TurkishMorphologicalAnalysis-Js#readme",
+  "devDependencies": {
+    "@types/mocha": "^9.0.0",
+    "mocha": "^9.1.3",
+    "nlptoolkit-corpus": "^1.0.2",
+    "nlptoolkit-datastructure": "^1.0.0",
+    "nlptoolkit-dictionary": "^1.0.2",
+    "nlptoolkit-ngram": "^1.0.0",
+    "nlptoolkit-xmlparser": "^1.0.4",
+    "ts-node": "^10.4.0",
+    "typescript": "^4.5.2"
+  }
+}
