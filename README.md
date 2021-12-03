@@ -30,3 +30,115 @@ You can also see [Python](https://github.com/starlangsoftware/TurkishMorphologic
 [Java](https://github.com/starlangsoftware/TurkishMorphologicalAnalysis), [C++](https://github.com/starlangsoftware/TurkishMorphologicalAnalysis-CPP), 
 [Swift](https://github.com/starlangsoftware/TurkishMorphologicalAnalysis-Swift), [Cython](https://github.com/starlangsoftware/TurkishMorphologicalAnalysis-Cy),
 or [C#](https://github.com/starlangsoftware/TurkishMorphologicalAnalysis-CS) repository.
+
+Detailed Description
+============
+
++ [Creating FsmMorphologicalAnalyzer](#creating-fsmmorphologicalanalyzer)
++ [Word level morphological analysis](#word-level-morphological-analysis)
++ [Sentence level morphological analysis](#sentence-level-morphological-analysis)
+
+## Creating FsmMorphologicalAnalyzer 
+
+FsmMorphologicalAnalyzer provides Turkish morphological analysis. This class can be created as follows:
+
+    let fsm = new FsmMorphologicalAnalyzer();
+    
+This generates a new `TxtDictionary` type dictionary from [`turkish_dictionary.txt`](https://github.com/olcaytaner/Dictionary/tree/master/src/main/resources) with fixed cache size 100000 and by using [`turkish_finite_state_machine.xml`](https://github.com/olcaytaner/MorphologicalAnalysis/tree/master/src/main/resources). 
+
+Creating a morphological analyzer with different cache size, dictionary or finite state machine is also possible. 
+* With different cache size, 
+
+        let fsm = new FsmMorphologicalAnalyzer(50000);   
+
+* Using a different dictionary,
+
+        let fsm = new FsmMorphologicalAnalyzer("my_turkish_dictionary.txt");   
+
+* Specifying both finite state machine and dictionary, 
+
+        let fsm = new FsmMorphologicalAnalyzer("fsm.xml", "my_turkish_dictionary.txt") ;      
+    
+* Giving finite state machine and cache size with creating `TxtDictionary` object, 
+        
+        let dictionary = new TxtDictionary("my_turkish_dictionary.txt", WordComparator.TURKISH);
+        let fsm = new FsmMorphologicalAnalyzer("fsm.xml", dictionary, 50000) ;
+    
+* With different finite state machine and creating `TxtDictionary` object,
+       
+        let dictionary = new TxtDictionary("my_turkish_dictionary.txt", WordComparator.TURKISH, "my_turkish_misspelled.txt");
+        let fsm = new FsmMorphologicalAnalyzer("fsm.xml", dictionary);
+
+## Word level morphological analysis
+
+For morphological analysis,  `MorphologicalAnalysis(String word)` method of `FsmMorphologicalAnalyzer` is used. This returns `FsmParseList` object. 
+
+
+    let fsm = new FsmMorphologicalAnalyzer();
+    let word = "yarına";
+    let fsmParseList = fsm.morphologicalAnalysis(word);
+    for (let i = 0; i < fsmParseList.size(); i++){
+      console.log(fsmParseList.getFsmParse(i).getTransitionList();
+    } 
+      
+Output
+
+    yar+NOUN+A3SG+P2SG+DAT
+    yar+NOUN+A3SG+P3SG+DAT
+    yarı+NOUN+A3SG+P2SG+DAT
+    yarın+NOUN+A3SG+PNON+DAT
+    
+From `FsmParseList`, a single `FsmParse` can be obtained as follows:
+
+    let parse = fsmParseList.getFsmParse(0);
+    console.log(parse.getTransitionList();   
+    
+Output    
+    
+    yar+NOUN+A3SG+P2SG+DAT
+    
+## Sentence level morphological analysis
+`morphologicalAnalysis(Sentence sentence)` method of `FsmMorphologicalAnalyzer` is used. This returns `FsmParseList[]` object. 
+
+    let fsm = new FsmMorphologicalAnalyzer();
+    let sentence = new Sentence("Yarın doktora gidecekler");
+    let parseLists = fsm.morphologicalAnalysis(sentence);
+    for(let i = 0; i < parseLists.length; i++){
+        for(let j = 0; j < parseLists[i].size(); j++){
+            let parse = parseLists[i].getFsmParse(j);
+            console.log(parse.getTransitionList());
+        }
+        console.log("-----------------");
+    }
+    
+Output
+    
+    -----------------
+    yar+NOUN+A3SG+P2SG+NOM
+    yar+NOUN+A3SG+PNON+GEN
+    yar+VERB+POS+IMP+A2PL
+    yarı+NOUN+A3SG+P2SG+NOM
+    yarın+NOUN+A3SG+PNON+NOM
+    -----------------
+    doktor+NOUN+A3SG+PNON+DAT
+    doktora+NOUN+A3SG+PNON+NOM
+    -----------------
+    git+VERB+POS+FUT+A3PL
+    git+VERB+POS^DB+NOUN+FUTPART+A3PL+PNON+NOM
+
+# Cite
+
+	@inproceedings{yildiz-etal-2019-open,
+    	title = "An Open, Extendible, and Fast {T}urkish Morphological Analyzer",
+    	author = {Y{\i}ld{\i}z, Olcay Taner  and
+      	Avar, Beg{\"u}m  and
+      	Ercan, G{\"o}khan},
+    	booktitle = "Proceedings of the International Conference on Recent Advances in Natural Language Processing (RANLP 2019)",
+    	month = sep,
+    	year = "2019",
+    	address = "Varna, Bulgaria",
+    	publisher = "INCOMA Ltd.",
+    	url = "https://www.aclweb.org/anthology/R19-1156",
+    	doi = "10.26615/978-954-452-056-4_156",
+    	pages = "1364--1372",
+	}
