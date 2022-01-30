@@ -20,14 +20,16 @@
          * @param parse String to parse.
          */
         constructor(parse) {
+            this.metaMorphemeList = new Array();
             if (parse == "+") {
                 this.root = new Word_1.Word("+");
             }
             else {
                 let words = parse.split("\\+");
                 this.root = new Word_1.Word(words[0]);
-                for (let i = 1; i < words.length; i++)
+                for (let i = 1; i < words.length; i++) {
                     this.metaMorphemeList.push(words[i]);
+                }
             }
         }
         /**

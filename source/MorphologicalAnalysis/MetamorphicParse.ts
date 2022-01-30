@@ -472,7 +472,7 @@ export class MetamorphicParse {
         MorphologicalTag.REPEAT
     ]
 
-    private metaMorphemeList: Array<string>
+    private metaMorphemeList: Array<string> = new Array<string>()
     private readonly root: Word
 
     /**
@@ -525,8 +525,9 @@ export class MetamorphicParse {
         } else {
             let words = parse.split("\\+");
             this.root = new Word(words[0]);
-            for (let i = 1; i < words.length; i++)
+            for (let i = 1; i < words.length; i++){
                 this.metaMorphemeList.push(words[i]);
+            }
         }
     }
 
