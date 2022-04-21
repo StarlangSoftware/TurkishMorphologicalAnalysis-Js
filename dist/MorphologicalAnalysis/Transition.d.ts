@@ -56,29 +56,6 @@ export declare class Transition {
     transitionPossibleFromParse(currentFsmParse: FsmParse): boolean;
     transitionPossibleFromRoot(root: TxtWord, fromState: State): boolean;
     /**
-     * The beforeLastVowel method takes a {@link String} stem as an input. It loops through the given stem and returns
-     * the second last vowel.
-     *
-     * @param stem String input.
-     * @return Vowel before the last vowel.
-     */
-    private beforeLastVowel;
-    /**
-     * The lastVowel method takes a {@link String} stem as an input. It loops through the given stem and returns
-     * the last vowel.
-     *
-     * @param stem String input.
-     * @return the last vowel.
-     */
-    private lastVowel;
-    /**
-     * The lastPhoneme method takes a {@link String} stem as an input. It then returns the last phoneme of the given stem.
-     *
-     * @param stem String input.
-     * @return the last phoneme.
-     */
-    private lastPhoneme;
-    /**
      * The withFirstChar method returns the first character of the with variable.
      *
      * @return the first character of the with variable.
@@ -117,33 +94,6 @@ export declare class Transition {
      * @return String type output that has the transition.
      */
     makeTransition(root: TxtWord, stem: string, startState?: State): string;
-    private resolveD;
-    private resolveA;
-    private resolveH;
-    /**
-     * The resolveC method takes a {@link String} formation as an input. If the last phoneme is on of the "çfhkpsşt", it
-     * concatenates given formation with 'ç', if not it concatenates given formation with 'c'.
-     *
-     * @param formation {@link String} input.
-     * @return resolved String.
-     */
-    private resolveC;
-    /**
-     * The resolveS method takes a {@link String} formation as an input. It then concatenates given formation with 's'.
-     *
-     * @param formation {@link String} input.
-     * @return resolved String.
-     */
-    private resolveS;
-    /**
-     * The resolveSh method takes a {@link String} formation as an input. If the last character is a vowel, it concatenates
-     * given formation with ş, if the last character is not a vowel, and not 't' it directly returns given formation, but if it
-     * is equal to 't', it transforms it to 'd'.
-     *
-     * @param formation {@link String} input.
-     * @return resolved String.
-     */
-    private resolveSh;
     /**
      * An overridden toString method which returns the with variable.
      *

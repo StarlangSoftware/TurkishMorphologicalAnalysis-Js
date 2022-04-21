@@ -4,7 +4,7 @@
         if (v !== undefined) module.exports = v;
     }
     else if (typeof define === "function" && define.amd) {
-        define(["require", "exports", "./State", "nlptoolkit-dictionary/dist/Language/TurkishLanguage"], factory);
+        define(["require", "exports", "./State", "nlptoolkit-dictionary/dist/Language/TurkishLanguage", "nlptoolkit-dictionary/dist/Dictionary/Word", "./MorphotacticEngine"], factory);
     }
 })(function (require, exports) {
     "use strict";
@@ -12,6 +12,8 @@
     exports.Transition = void 0;
     const State_1 = require("./State");
     const TurkishLanguage_1 = require("nlptoolkit-dictionary/dist/Language/TurkishLanguage");
+    const Word_1 = require("nlptoolkit-dictionary/dist/Dictionary/Word");
+    const MorphotacticEngine_1 = require("./MorphotacticEngine");
     class Transition {
         /**
          * Another constructor of {@link Transition} class which takes  a {@link State}, and three {@link String}s as input. Then it
@@ -154,65 +156,6 @@
             return true;
         }
         /**
-         * The beforeLastVowel method takes a {@link String} stem as an input. It loops through the given stem and returns
-         * the second last vowel.
-         *
-         * @param stem String input.
-         * @return Vowel before the last vowel.
-         */
-        beforeLastVowel(stem) {
-            let before = 1;
-            let last = '0';
-            for (let i = stem.length - 1; i >= 0; i--) {
-                if (TurkishLanguage_1.TurkishLanguage.isVowel(stem.charAt(i))) {
-                    if (before == 1) {
-                        last = stem.charAt(i);
-                        before--;
-                        continue;
-                    }
-                    return stem.charAt(i);
-                }
-            }
-            return last;
-        }
-        /**
-         * The lastVowel method takes a {@link String} stem as an input. It loops through the given stem and returns
-         * the last vowel.
-         *
-         * @param stem String input.
-         * @return the last vowel.
-         */
-        lastVowel(stem) {
-            for (let i = stem.length - 1; i >= 0; i--) {
-                if (TurkishLanguage_1.TurkishLanguage.isVowel(stem.charAt(i))) {
-                    return stem.charAt(i);
-                }
-            }
-            for (let i = stem.length - 1; i >= 0; i--) {
-                if (stem.charAt(i) >= '0' && stem.charAt(i) <= '9') {
-                    return stem.charAt(i);
-                }
-            }
-            return '0';
-        }
-        /**
-         * The lastPhoneme method takes a {@link String} stem as an input. It then returns the last phoneme of the given stem.
-         *
-         * @param stem String input.
-         * @return the last phoneme.
-         */
-        lastPhoneme(stem) {
-            if (stem.length == 0) {
-                return ' ';
-            }
-            if (stem.charAt(stem.length - 1) != '\'') {
-                return stem.charAt(stem.length - 1);
-            }
-            else {
-                return stem.charAt(stem.length - 2);
-            }
-        }
-        /**
          * The withFirstChar method returns the first character of the with variable.
          *
          * @return the first character of the with variable.
@@ -349,7 +292,7 @@
                                 //---duplicatesDuringSuffixation---
                                 if (this.softenDuringSuffixation(root)) {
                                     //--extra softenDuringSuffixation
-                                    switch (this.lastPhoneme(stem)) {
+                                    switch (Word_1.Word.lastPhoneme(stem)) {
                                         case 'p':
                                             //tıp->tıbbı
                                             formation = stem.substring(0, stem.length - 1) + "bb";
@@ -374,7 +317,7 @@
                                     //---lastIdropsDuringSuffixation---
                                     if (this.softenDuringSuffixation(root)) {
                                         //---softenDuringSuffixation---
-                                        switch (this.lastPhoneme(stem)) {
+                                        switch (Word_1.Word.lastPhoneme(stem)) {
                                             case 'p':
                                                 //hizip->hizbi, kayıp->kaybı, kayıt->kaydı, kutup->kutbu
                                                 formation = stem.substring(0, stem.length - 2) + 'b';
@@ -397,7 +340,7 @@
                                     this.formationToCheck = stem;
                                 }
                                 else {
-                                    switch (this.lastPhoneme(stem)) {
+                                    switch (Word_1.Word.lastPhoneme(stem)) {
                                         //---nounSoftenDuringSuffixation or verbSoftenDuringSuffixation
                                         case 'p':
                                             //adap->adabı, amip->amibi, azap->azabı, gazap->gazabı
@@ -463,7 +406,7 @@
                     }
                 }
                 else {
-                    if ((TurkishLanguage_1.TurkishLanguage.isConsonantDrop(this.withFirstChar()) && TurkishLanguage_1.TurkishLanguage.isConsonant(this.lastPhoneme(stem))) ||
+                    if ((TurkishLanguage_1.TurkishLanguage.isConsonantDrop(this.withFirstChar()) && TurkishLanguage_1.TurkishLanguage.isConsonant(Word_1.Word.lastPhoneme(stem))) ||
                         (rootWord && root.consonantSMayInsertedDuringPossesiveSuffixation())) {
                         if (this._with.charAt(0) == '\'') {
                             formation = formation + '\'';
@@ -480,27 +423,27 @@
                 for (; i < this._with.length; i++) {
                     switch (this._with.charAt(i)) {
                         case 'D':
-                            formation = this.resolveD(root, formation);
+                            formation = MorphotacticEngine_1.MorphotacticEngine.resolveD(root, formation, this.formationToCheck);
                             break;
                         case 'A':
-                            formation = this.resolveA(root, formation, rootWord);
+                            formation = MorphotacticEngine_1.MorphotacticEngine.resolveA(root, formation, rootWord, this.formationToCheck);
                             break;
                         case 'H':
                             if (this._with.charAt(0) != '\'') {
-                                formation = this.resolveH(root, formation, i == 0, this._with.startsWith("Hyor"), rootWord);
+                                formation = MorphotacticEngine_1.MorphotacticEngine.resolveH(root, formation, i == 0, this._with.startsWith("Hyor"), rootWord, this.formationToCheck);
                             }
                             else {
-                                formation = this.resolveH(root, formation, i == 1, false, rootWord);
+                                formation = MorphotacticEngine_1.MorphotacticEngine.resolveH(root, formation, i == 1, false, rootWord, this.formationToCheck);
                             }
                             break;
                         case 'C':
-                            formation = this.resolveC(formation);
+                            formation = MorphotacticEngine_1.MorphotacticEngine.resolveC(formation, this.formationToCheck);
                             break;
                         case 'S':
-                            formation = this.resolveS(formation);
+                            formation = MorphotacticEngine_1.MorphotacticEngine.resolveS(formation);
                             break;
                         case 'Ş':
-                            formation = this.resolveSh(formation);
+                            formation = MorphotacticEngine_1.MorphotacticEngine.resolveSh(formation);
                             break;
                         default:
                             if (i == this._with.length - 1 && this._with.charAt(i) == 's') {
@@ -513,220 +456,6 @@
                     this.formationToCheck = formation;
                 }
                 return formation;
-            }
-        }
-        resolveD(root, formation) {
-            if (root.isAbbreviation()) {
-                return formation + 'd';
-            }
-            if (this.lastPhoneme(this.formationToCheck) >= '0' && this.lastPhoneme(this.formationToCheck) <= '9') {
-                switch (this.lastPhoneme(this.formationToCheck)) {
-                    case '3':
-                    case '4':
-                    case '5':
-                        //3->3'tü, 5->5'ti, 4->4'tü
-                        return formation + 't';
-                    case '0':
-                        if (root.getName().endsWith("40") || root.getName().endsWith("60") || root.getName().endsWith("70"))
-                            //40->40'tı, 60->60'tı, 70->70'ti
-                            return formation + 't';
-                        else
-                            //30->30'du, 50->50'ydi, 80->80'di
-                            return formation + 'd';
-                    default:
-                        return formation + 'd';
-                }
-            }
-            else {
-                if (TurkishLanguage_1.TurkishLanguage.isSertSessiz(this.lastPhoneme(this.formationToCheck))) {
-                    //yap+DH->yaptı
-                    return formation + 't';
-                }
-                else {
-                    //sar+DH->sardı
-                    return formation + 'd';
-                }
-            }
-        }
-        resolveA(root, formation, rootWord) {
-            if (root.isAbbreviation()) {
-                return formation + 'e';
-            }
-            if (this.lastVowel(this.formationToCheck) >= '0' && this.lastVowel(this.formationToCheck) <= '9') {
-                switch (this.lastVowel(this.formationToCheck)) {
-                    case '6':
-                    case '9':
-                        //6'ya, 9'a
-                        return formation + 'a';
-                    case '0':
-                        if (root.getName().endsWith("10") || root.getName().endsWith("30") || root.getName().endsWith("40") ||
-                            root.getName().endsWith("60") || root.getName().endsWith("90"))
-                            //10'a, 30'a, 40'a, 60'a, 90'a
-                            return formation + 'a';
-                        else
-                            //20'ye, 50'ye, 80'e, 70'e
-                            return formation + 'e';
-                    default:
-                        //3'e, 8'e, 4'e, 2'ye
-                        return formation + 'e';
-                }
-            }
-            if (TurkishLanguage_1.TurkishLanguage.isBackVowel(this.lastVowel(this.formationToCheck))) {
-                if (root.notObeysVowelHarmonyDuringAgglutination() && rootWord) {
-                    //alkole, anormale
-                    return formation + 'e';
-                }
-                else {
-                    //sakala, kabala
-                    return formation + 'a';
-                }
-            }
-            if (TurkishLanguage_1.TurkishLanguage.isFrontVowel(this.lastVowel(this.formationToCheck))) {
-                if (root.notObeysVowelHarmonyDuringAgglutination() && rootWord) {
-                    //faika, halika
-                    return formation + 'a';
-                }
-                else {
-                    //kediye, eve
-                    return formation + 'e';
-                }
-            }
-            if (root.isNumeral() || root.isFraction() || root.isReal()) {
-                if (root.getName().endsWith("6") || root.getName().endsWith("9") || root.getName().endsWith("10") ||
-                    root.getName().endsWith("30") || root.getName().endsWith("40") || root.getName().endsWith("60") ||
-                    root.getName().endsWith("90")) {
-                    return formation + 'a';
-                }
-                else {
-                    return formation + 'e';
-                }
-            }
-            return formation;
-        }
-        resolveH(root, formation, beginningOfSuffix, specialCaseTenseSuffix, rootWord) {
-            if (root.isAbbreviation())
-                return formation + 'i';
-            if (beginningOfSuffix && TurkishLanguage_1.TurkishLanguage.isVowel(this.lastPhoneme(this.formationToCheck)) &&
-                !specialCaseTenseSuffix) {
-                return formation;
-            }
-            if (specialCaseTenseSuffix) {
-                //eğer ek Hyor eki ise,
-                if (rootWord) {
-                    if (root.vowelAChangesToIDuringYSuffixation()) {
-                        if (TurkishLanguage_1.TurkishLanguage.isFrontRoundedVowel(this.beforeLastVowel(this.formationToCheck))) {
-                            //büyülüyor, bölümlüyor, çözümlüyor, döşüyor
-                            return formation.substring(0, formation.length - 1) + 'ü';
-                        }
-                        if (TurkishLanguage_1.TurkishLanguage.isFrontUnroundedVowel(this.beforeLastVowel(this.formationToCheck))) {
-                            //adresliyor, alevliyor, ateşliyor, bekliyor
-                            return formation.substring(0, formation.length - 1) + 'i';
-                        }
-                        if (TurkishLanguage_1.TurkishLanguage.isBackRoundedVowel(this.beforeLastVowel(this.formationToCheck))) {
-                            //buğuluyor, bulguluyor, çamurluyor, aforozluyor
-                            return formation.substring(0, formation.length - 1) + 'u';
-                        }
-                        if (TurkishLanguage_1.TurkishLanguage.isBackUnroundedVowel(this.beforeLastVowel(this.formationToCheck))) {
-                            //açıklıyor, çalkalıyor, gazlıyor, gıcırdıyor
-                            return formation.substring(0, formation.length - 1) + 'ı';
-                        }
-                    }
-                }
-                if (TurkishLanguage_1.TurkishLanguage.isVowel(this.lastPhoneme(this.formationToCheck))) {
-                    if (TurkishLanguage_1.TurkishLanguage.isFrontRoundedVowel(this.beforeLastVowel(this.formationToCheck))) {
-                        return formation.substring(0, formation.length - 1) + 'ü';
-                    }
-                    if (TurkishLanguage_1.TurkishLanguage.isFrontUnroundedVowel(this.beforeLastVowel(this.formationToCheck))) {
-                        return formation.substring(0, formation.length - 1) + 'i';
-                    }
-                    if (TurkishLanguage_1.TurkishLanguage.isBackRoundedVowel(this.beforeLastVowel(this.formationToCheck))) {
-                        return formation.substring(0, formation.length - 1) + 'u';
-                    }
-                    if (TurkishLanguage_1.TurkishLanguage.isBackUnroundedVowel(this.beforeLastVowel(this.formationToCheck))) {
-                        return formation.substring(0, formation.length - 1) + 'ı';
-                    }
-                }
-            }
-            if (TurkishLanguage_1.TurkishLanguage.isFrontRoundedVowel(this.lastVowel(this.formationToCheck)) ||
-                (TurkishLanguage_1.TurkishLanguage.isBackRoundedVowel(this.lastVowel(this.formationToCheck)) && root.notObeysVowelHarmonyDuringAgglutination())) {
-                return formation + 'ü';
-            }
-            if (TurkishLanguage_1.TurkishLanguage.isFrontUnroundedVowel(this.lastVowel(this.formationToCheck)) ||
-                (this.lastVowel(this.formationToCheck) == 'a' && root.notObeysVowelHarmonyDuringAgglutination())) {
-                return formation + 'i';
-            }
-            if (TurkishLanguage_1.TurkishLanguage.isBackRoundedVowel(this.lastVowel(this.formationToCheck))) {
-                return formation + 'u';
-            }
-            if (TurkishLanguage_1.TurkishLanguage.isBackUnroundedVowel(this.lastVowel(this.formationToCheck))) {
-                return formation + 'ı';
-            }
-            if (root.isNumeral() || root.isFraction() || root.isReal()) {
-                if (root.getName().endsWith("6") || root.getName().endsWith("40") || root.getName().endsWith("60") ||
-                    root.getName().endsWith("90")) {
-                    //6'yı, 40'ı, 60'ı
-                    return formation + 'ı';
-                }
-                else {
-                    if (root.getName().endsWith("3") || root.getName().endsWith("4") || root.getName().endsWith("00")) {
-                        //3'ü, 4'ü, 100'ü
-                        return formation + 'ü';
-                    }
-                    else {
-                        if (root.getName().endsWith("9") || root.getName().endsWith("10") || root.getName().endsWith("30")) {
-                            //9'u, 10'u, 30'u
-                            return formation + 'u';
-                        }
-                        else {
-                            //2'yi, 5'i, 8'i
-                            return formation + 'i';
-                        }
-                    }
-                }
-            }
-            return formation;
-        }
-        /**
-         * The resolveC method takes a {@link String} formation as an input. If the last phoneme is on of the "çfhkpsşt", it
-         * concatenates given formation with 'ç', if not it concatenates given formation with 'c'.
-         *
-         * @param formation {@link String} input.
-         * @return resolved String.
-         */
-        resolveC(formation) {
-            if (TurkishLanguage_1.TurkishLanguage.isSertSessiz(this.lastPhoneme(this.formationToCheck))) {
-                return formation + 'ç';
-            }
-            else {
-                return formation + 'c';
-            }
-        }
-        /**
-         * The resolveS method takes a {@link String} formation as an input. It then concatenates given formation with 's'.
-         *
-         * @param formation {@link String} input.
-         * @return resolved String.
-         */
-        resolveS(formation) {
-            return formation + 's';
-        }
-        /**
-         * The resolveSh method takes a {@link String} formation as an input. If the last character is a vowel, it concatenates
-         * given formation with ş, if the last character is not a vowel, and not 't' it directly returns given formation, but if it
-         * is equal to 't', it transforms it to 'd'.
-         *
-         * @param formation {@link String} input.
-         * @return resolved String.
-         */
-        resolveSh(formation) {
-            if (TurkishLanguage_1.TurkishLanguage.isVowel(formation.charAt(formation.length - 1))) {
-                return formation + 'ş';
-            }
-            else {
-                if (formation.charAt(formation.length - 1) != 't')
-                    return formation;
-                else
-                    return formation.substring(0, formation.length - 1) + 'd';
             }
         }
         /**
