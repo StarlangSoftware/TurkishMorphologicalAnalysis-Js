@@ -6,7 +6,7 @@ import {Sentence} from "nlptoolkit-corpus/dist/Sentence";
 
 export class DisambiguationCorpus extends Corpus{
 
-    constructor(fileName: string) {
+    constructor(fileName?: string) {
         super();
         if (fileName != undefined){
             let newSentence = undefined;
