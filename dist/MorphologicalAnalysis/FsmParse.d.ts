@@ -219,6 +219,12 @@ export declare class FsmParse extends MorphologicalParse {
      * If it is "DuplicateRoot", it assigns concatenation of first item of formList and +DUP to the result String.
      * Ex : Allak
      * <p>
+     * If it is "CodeRoot", it assigns concatenation of first item of formList and +CODE to the result String.
+     * Ex : 5000-WX
+     * <p>
+     * If it is "MetricRoot", it assigns concatenation of first item of formList and +METRIC to the result String.
+     * Ex : 6cmx12cm
+     * <p>
      * If it is "QuestionRoot", it assigns concatenation of first item of formList and +QUES to the result String.
      * Ex : Mı
      * <p>

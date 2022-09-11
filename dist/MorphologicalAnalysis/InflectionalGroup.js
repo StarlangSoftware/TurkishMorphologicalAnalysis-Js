@@ -182,7 +182,7 @@
         "INF2", "INF3", "BSTAG", "ESTAG", "BTTAG",
         "ETTAG", "BDTAG", "EDTAG", "INF1", "ASLONGAS",
         "DIST", "ADAMANTLY", "PERCENT", "WITHOUTBEINGABLETOHAVEDONESO", "DIM",
-        "PERS", "FRACTION", "HASHTAG", "EMAIL", "DATE"];
+        "PERS", "FRACTION", "HASHTAG", "EMAIL", "DATE", "CODE", "METRIC"];
     InflectionalGroup.morphoTags = [MorphologicalTag_1.MorphologicalTag.NOUN, MorphologicalTag_1.MorphologicalTag.ADVERB, MorphologicalTag_1.MorphologicalTag.ADJECTIVE,
         MorphologicalTag_1.MorphologicalTag.VERB, MorphologicalTag_1.MorphologicalTag.A1SG, MorphologicalTag_1.MorphologicalTag.A2SG, MorphologicalTag_1.MorphologicalTag.A3SG, MorphologicalTag_1.MorphologicalTag.A1PL,
         MorphologicalTag_1.MorphologicalTag.A2PL, MorphologicalTag_1.MorphologicalTag.A3PL, MorphologicalTag_1.MorphologicalTag.P1SG, MorphologicalTag_1.MorphologicalTag.P2SG, MorphologicalTag_1.MorphologicalTag.P3SG, MorphologicalTag_1.MorphologicalTag.P1PL,
@@ -208,6 +208,7 @@
         MorphologicalTag_1.MorphologicalTag.INFINITIVE2, MorphologicalTag_1.MorphologicalTag.INFINITIVE3, MorphologicalTag_1.MorphologicalTag.BEGINNINGOFSENTENCE, MorphologicalTag_1.MorphologicalTag.ENDOFSENTENCE, MorphologicalTag_1.MorphologicalTag.BEGINNINGOFTITLE,
         MorphologicalTag_1.MorphologicalTag.ENDOFTITLE, MorphologicalTag_1.MorphologicalTag.BEGINNINGOFDOCUMENT, MorphologicalTag_1.MorphologicalTag.ENDOFDOCUMENT, MorphologicalTag_1.MorphologicalTag.INFINITIVE, MorphologicalTag_1.MorphologicalTag.ASLONGAS,
         MorphologicalTag_1.MorphologicalTag.DISTRIBUTIVE, MorphologicalTag_1.MorphologicalTag.ADAMANTLY, MorphologicalTag_1.MorphologicalTag.PERCENT, MorphologicalTag_1.MorphologicalTag.WITHOUTBEINGABLETOHAVEDONESO, MorphologicalTag_1.MorphologicalTag.DIMENSION,
-        MorphologicalTag_1.MorphologicalTag.PERSONALPRONOUN, MorphologicalTag_1.MorphologicalTag.FRACTION, MorphologicalTag_1.MorphologicalTag.HASHTAG, MorphologicalTag_1.MorphologicalTag.EMAIL, MorphologicalTag_1.MorphologicalTag.DATE];
+        MorphologicalTag_1.MorphologicalTag.PERSONALPRONOUN, MorphologicalTag_1.MorphologicalTag.FRACTION, MorphologicalTag_1.MorphologicalTag.HASHTAG, MorphologicalTag_1.MorphologicalTag.EMAIL, MorphologicalTag_1.MorphologicalTag.DATE,
+        MorphologicalTag_1.MorphologicalTag.CODE, MorphologicalTag_1.MorphologicalTag.METRIC];
 });
 //# sourceMappingURL=InflectionalGroup.js.map

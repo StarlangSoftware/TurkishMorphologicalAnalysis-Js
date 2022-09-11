@@ -19,6 +19,10 @@ describe('FsmParseTest', function() {
         let parse12 = fsm.morphologicalAnalysis("o");
         let parse13 = fsm.morphologicalAnalysis("arabası");
         let parse14 = fsm.morphologicalAnalysis("sana");
+        let parse15 = fsm.morphologicalAnalysis("açacağını");
+        let parse16 = fsm.morphologicalAnalysis("kollarımız");
+        let parse17 = fsm.morphologicalAnalysis("yapmamızı");
+        let parse18 = fsm.morphologicalAnalysis("koşmalıyız");
         it('testSize', function() {
             assert.strictEqual(2, parse1.size());
             assert.strictEqual(2, parse2.size());
@@ -48,6 +52,10 @@ describe('FsmParseTest', function() {
             assert.strictEqual("değerlendirme", parse4.getParseWithLongestRootWord().getWord().getName());
             assert.strictEqual("soruşturma", parse5.getParseWithLongestRootWord().getWord().getName());
             assert.strictEqual("karşılaştırmalı", parse6.getParseWithLongestRootWord().getWord().getName());
+            assert.strictEqual("aç", parse15.getParseWithLongestRootWord().getWord().getName());
+            assert.strictEqual("kol", parse16.getParseWithLongestRootWord().getWord().getName());
+            assert.strictEqual("yap", parse17.getParseWithLongestRootWord().getWord().getName());
+            assert.strictEqual("koş", parse18.getParseWithLongestRootWord().getWord().getName());
         });
         it('testReduceToParsesWithSameRootAndPos', function() {
             parse2.reduceToParsesWithSameRootAndPos(new Word("kop+VERB"));

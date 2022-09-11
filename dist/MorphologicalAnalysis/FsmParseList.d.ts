@@ -2,6 +2,7 @@ import { FsmParse } from "./FsmParse";
 import { Word } from "nlptoolkit-dictionary/dist/Dictionary/Word";
 export declare class FsmParseList {
     private readonly fsmParses;
+    static longestRootExceptions: string[];
     /**
      * A constructor of {@link FsmParseList} class which takes an {@link Array} fsmParses as an input. First it sorts
      * the items of the {@link Array} then loops through it, if the current item's transitions equal to the next item's
@@ -42,11 +43,19 @@ export declare class FsmParseList {
     reduceToParsesWithSameRootAndPos(currentWithPos: Word): void;
     /**
      * The getParseWithLongestRootWord method returns the parse with the longest root word. If more than one parse has the
-     * longest root word, the first parse with that root is returned.
+     * longest root word, the first parse with that root is returned. If the longest root word belongs to an
+     * exceptional case, the parse with the next longest root word that does not, is returned.
      *
      * @return FsmParse Parse with the longest root word.
      */
     getParseWithLongestRootWord(): FsmParse;
+    /**
+     * The isLongestRootException method returns true if the longest root word belongs to an exceptional case, false otherwise.
+     *
+     * @param fsmParse {@link FsmParse} input.
+     * @return true if the longest root belongs to an exceptional case, false otherwise.
+     */
+    isLongestRootException(fsmParse: FsmParse): boolean;
     /**
      * The reduceToParsesWithSameRoot method takes a {@link String} currentWithPos as an input and loops i times till
      * i equals to the size of the fsmParses {@link Array}. If the given currentRoot does not equal to the root of ith

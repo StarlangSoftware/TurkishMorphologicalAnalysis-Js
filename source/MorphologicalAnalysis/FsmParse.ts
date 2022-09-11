@@ -438,6 +438,12 @@ export class FsmParse extends MorphologicalParse{
      * If it is "DuplicateRoot", it assigns concatenation of first item of formList and +DUP to the result String.
      * Ex : Allak
      * <p>
+     * If it is "CodeRoot", it assigns concatenation of first item of formList and +CODE to the result String.
+     * Ex : 5000-WX
+     * <p>
+     * If it is "MetricRoot", it assigns concatenation of first item of formList and +METRIC to the result String.
+     * Ex : 6cmx12cm
+     * <p>
      * If it is "QuestionRoot", it assigns concatenation of first item of formList and +QUES to the result String.
      * Ex : Mı
      * <p>
@@ -538,40 +544,48 @@ export class FsmParse extends MorphologicalParse{
                                                                                 if (this.suffixList[0].getName() == "DuplicateRoot") {
                                                                                     result = this.formList[0] + "+DUP";
                                                                                 } else {
-                                                                                    if (this.suffixList[0].getName() == "QuestionRoot") {
-                                                                                        result = "mi+QUES";
+                                                                                    if (this.suffixList[0].getName() == "CodeRoot"){
+                                                                                        result = this.formList[0] + "+CODE";
                                                                                     } else {
-                                                                                        if (this.suffixList[0].getName() == "PostP") {
-                                                                                            if (this.formList[0] == "karşı" || this.formList[0] == "ilişkin" || this.formList[0] == "göre" || this.formList[0] == "kadar" || this.formList[0] == "ait" || this.formList[0] == "yönelik" || this.formList[0] == "rağmen" || this.formList[0] == "değin" || this.formList[0] == "dek" || this.formList[0] == "doğru" || this.formList[0] == "karşın" || this.formList[0] == "dair" || this.formList[0] == "atfen" || this.formList[0] == "binaen" || this.formList[0] == "hitaben" || this.formList[0] == "istinaden" || this.formList[0] == "mahsuben" || this.formList[0] == "mukabil" || this.formList[0] == "nazaran") {
-                                                                                                result = this.formList[0] + "+POSTP+PCDAT";
+                                                                                        if (this.suffixList[0].getName() == "MetricRoot"){
+                                                                                            result = this.formList[0] + "+METRIC";
+                                                                                        } else {
+                                                                                            if (this.suffixList[0].getName() == "QuestionRoot") {
+                                                                                                result = "mi+QUES";
                                                                                             } else {
-                                                                                                if (this.formList[0] == "sonra" || this.formList[0] == "önce" || this.formList[0] == "beri" || this.formList[0] == "fazla" || this.formList[0] == "dolayı" || this.formList[0] == "itibaren" || this.formList[0] == "başka" || this.formList[0] == "çok" || this.formList[0] == "evvel" || this.formList[0] == "ötürü" || this.formList[0] == "yana" || this.formList[0] == "öte" || this.formList[0] == "aşağı" || this.formList[0] == "yukarı" || this.formList[0] == "dışarı" || this.formList[0] == "az" || this.formList[0] == "gayrı") {
-                                                                                                    result = this.formList[0] + "+POSTP+PCABL";
-                                                                                                } else {
-                                                                                                    if (this.formList[0] == "yanısıra") {
-                                                                                                        result = this.formList[0] + "+POSTP+PCGEN";
+                                                                                                if (this.suffixList[0].getName() == "PostP") {
+                                                                                                    if (this.formList[0] == "karşı" || this.formList[0] == "ilişkin" || this.formList[0] == "göre" || this.formList[0] == "kadar" || this.formList[0] == "ait" || this.formList[0] == "yönelik" || this.formList[0] == "rağmen" || this.formList[0] == "değin" || this.formList[0] == "dek" || this.formList[0] == "doğru" || this.formList[0] == "karşın" || this.formList[0] == "dair" || this.formList[0] == "atfen" || this.formList[0] == "binaen" || this.formList[0] == "hitaben" || this.formList[0] == "istinaden" || this.formList[0] == "mahsuben" || this.formList[0] == "mukabil" || this.formList[0] == "nazaran") {
+                                                                                                        result = this.formList[0] + "+POSTP+PCDAT";
                                                                                                     } else {
-                                                                                                        if (this.formList[0] == "birlikte" || this.formList[0] == "beraber") {
-                                                                                                            result = this.formList[0] + "+POSTP+PCINS";
+                                                                                                        if (this.formList[0] == "sonra" || this.formList[0] == "önce" || this.formList[0] == "beri" || this.formList[0] == "fazla" || this.formList[0] == "dolayı" || this.formList[0] == "itibaren" || this.formList[0] == "başka" || this.formList[0] == "çok" || this.formList[0] == "evvel" || this.formList[0] == "ötürü" || this.formList[0] == "yana" || this.formList[0] == "öte" || this.formList[0] == "aşağı" || this.formList[0] == "yukarı" || this.formList[0] == "dışarı" || this.formList[0] == "az" || this.formList[0] == "gayrı") {
+                                                                                                            result = this.formList[0] + "+POSTP+PCABL";
                                                                                                         } else {
-                                                                                                            if (this.formList[0] == "aşkın" || this.formList[0] == "takiben") {
-                                                                                                                result = this.formList[0] + "+POSTP+PCACC";
+                                                                                                            if (this.formList[0] == "yanısıra") {
+                                                                                                                result = this.formList[0] + "+POSTP+PCGEN";
                                                                                                             } else {
-                                                                                                                result = this.formList[0] + "+POSTP+PCNOM";
+                                                                                                                if (this.formList[0] == "birlikte" || this.formList[0] == "beraber") {
+                                                                                                                    result = this.formList[0] + "+POSTP+PCINS";
+                                                                                                                } else {
+                                                                                                                    if (this.formList[0] == "aşkın" || this.formList[0] == "takiben") {
+                                                                                                                        result = this.formList[0] + "+POSTP+PCACC";
+                                                                                                                    } else {
+                                                                                                                        result = this.formList[0] + "+POSTP+PCNOM";
+                                                                                                                    }
+                                                                                                                }
                                                                                                             }
                                                                                                         }
                                                                                                     }
-                                                                                                }
-                                                                                            }
-                                                                                        } else {
-                                                                                            if (this.suffixList[0].getName().startsWith("PronounRoot")) {
-                                                                                                result = this.pronounTransition();
-                                                                                            } else {
-                                                                                                if (this.suffixList[0].getName() == "OrdinalRoot") {
-                                                                                                    result = this.formList[0] + "+NUM+ORD";
                                                                                                 } else {
-                                                                                                    if (this.suffixList[0].getName().startsWith("Adjective")) {
-                                                                                                        result = this.formList[0] + "+ADJ";
+                                                                                                    if (this.suffixList[0].getName().startsWith("PronounRoot")) {
+                                                                                                        result = this.pronounTransition();
+                                                                                                    } else {
+                                                                                                        if (this.suffixList[0].getName() == "OrdinalRoot") {
+                                                                                                            result = this.formList[0] + "+NUM+ORD";
+                                                                                                        } else {
+                                                                                                            if (this.suffixList[0].getName().startsWith("Adjective")) {
+                                                                                                                result = this.formList[0] + "+ADJ";
+                                                                                                            }
+                                                                                                        }
                                                                                                     }
                                                                                                 }
                                                                                             }

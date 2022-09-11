@@ -4,10 +4,38 @@ import {TxtWord} from "nlptoolkit-dictionary/dist/Dictionary/TxtWord";
 import {State} from "../dist/MorphologicalAnalysis/State";
 import {Transition} from "../dist/MorphologicalAnalysis/Transition";
 import {Sentence} from "nlptoolkit-corpus/dist/Sentence";
+import * as fs from "fs";
 
 describe('FsmMorphologicalAnalyzerTest', function() {
     describe('FsmMorphologicalAnalyzerTest', function() {
         let fsm = new FsmMorphologicalAnalyzer();
+        it('morphologicalAnalysisGenerateAllParses', function() {
+            let testWords = ["göç", "açıkla", "yıldönümü",
+                "resim", "hal", "emlak", "git",
+                "kavur", "ye", "yemek", "ak",
+                "sıska", "yıka", "bul", "cevapla",
+                "coş", "böl", "del", "giy",
+                "kaydol", "anla", "çök", "çık",
+                "doldur", "azal", "göster", "aksa", "cenk", "kalp"]
+            for (let testWord of testWords){
+                let word = <TxtWord> fsm.getDictionary().getWord(testWord)
+                let parsesExpected : Array<string> = []
+                let data = fs.readFileSync("parses/" + word.getName() + ".txt", 'utf8')
+                let lines = data.split("\n")
+                for (let line of lines) {
+                    let items = line.split(" ")
+                    if (items.length == 2){
+                        parsesExpected.push(items[1].trim())
+                    }
+                }
+                let parsesGenerated = fsm.generateAllParses(word, word.getName().length + 5)
+                assert.ok(parsesExpected.length == parsesGenerated.length)
+                for (let parseGenerated of parsesGenerated){
+                    assert.ok(parsesExpected.includes(parseGenerated.toString()))
+                }
+            }
+        });
+
         it('morphologicalAnalysisDataTimeNumber', function() {
             assert.ok(fsm.morphologicalAnalysis("3/4").size() != 0);
             assert.ok(fsm.morphologicalAnalysis("3\\/4").size() != 0);

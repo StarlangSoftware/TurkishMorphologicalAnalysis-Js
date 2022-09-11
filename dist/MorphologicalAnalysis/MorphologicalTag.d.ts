@@ -506,5 +506,13 @@ export declare enum MorphologicalTag {
     /**
      * Date : 11/06/2018
      */
-    DATE = 126
+    DATE = 126,
+    /**
+     * Code : i7-9700K
+     */
+    CODE = 127,
+    /**
+     * Metric : 6cmx7cmx8cm
+     */
+    METRIC = 128
 }

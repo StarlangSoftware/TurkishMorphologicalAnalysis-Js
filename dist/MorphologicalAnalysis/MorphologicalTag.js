@@ -520,6 +520,14 @@
          * Date : 11/06/2018
          */
         MorphologicalTag[MorphologicalTag["DATE"] = 126] = "DATE";
+        /**
+         * Code : i7-9700K
+         */
+        MorphologicalTag[MorphologicalTag["CODE"] = 127] = "CODE";
+        /**
+         * Metric : 6cmx7cmx8cm
+         */
+        MorphologicalTag[MorphologicalTag["METRIC"] = 128] = "METRIC";
     })(MorphologicalTag = exports.MorphologicalTag || (exports.MorphologicalTag = {}));
 });
 //# sourceMappingURL=MorphologicalTag.js.map

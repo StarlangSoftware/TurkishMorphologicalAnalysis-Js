@@ -141,7 +141,7 @@
             if (this._with == "kü") {
                 return root.takesRelativeSuffixKu();
             }
-            if (this._with == "dHr") {
+            if (this._with == "DHr") {
                 if (this._toState.getName() == "Adverb") {
                     return true;
                 }

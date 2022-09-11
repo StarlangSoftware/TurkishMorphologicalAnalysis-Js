@@ -7,7 +7,7 @@ describe('FiniteStateMachineTest', function() {
         let fsm = new FiniteStateMachine("turkish_finite_state_machine.xml");
         let stateList = fsm.getStates();
         it('testStateCount', function() {
-            assert.strictEqual(139, stateList.length);
+            assert.strictEqual(141, stateList.length);
         });
         it('testStartEndStates', function() {
             let endStateCount = 0;
@@ -16,7 +16,7 @@ describe('FiniteStateMachineTest', function() {
                     endStateCount++;
                 }
             }
-            assert.strictEqual(35, endStateCount);
+            assert.strictEqual(37, endStateCount);
             let posCounts = new CounterHashMap<string>();
             for (let state of stateList){
                 posCounts.put(state.getPos());
