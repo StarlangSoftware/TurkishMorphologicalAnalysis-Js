@@ -170,6 +170,9 @@ export class FsmParseList {
     getParseWithLongestRootWord(): FsmParse{
         let maxLength = -1;
         let bestParse = undefined;
+        if (this.fsmParses.length > 0){
+            bestParse = this.fsmParses[0]
+        }
         for (let currentParse of this.fsmParses) {
             if (currentParse.getWord().getName().length > maxLength && !this.isLongestRootException(currentParse)) {
                 maxLength = currentParse.getWord().getName().length;
