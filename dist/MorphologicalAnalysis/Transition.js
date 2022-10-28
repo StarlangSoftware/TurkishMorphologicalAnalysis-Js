@@ -28,7 +28,6 @@
             this._toState = undefined;
             this._with = undefined;
             this.withName = undefined;
-            this.formationToCheck = undefined;
             this._toPos = undefined;
             this._with = _with;
             this.withName = withName;
@@ -263,13 +262,13 @@
                         return "sana";
                     }
                 }
-                this.formationToCheck = stem;
+                let formationToCheck;
                 //---vowelEChangesToIDuringYSuffixation---
                 //de->d(i)yor, ye->y(i)yor
                 if (rootWord && this.withFirstChar() == 'y' && root.vowelEChangesToIDuringYSuffixation() &&
                     (this._with.charAt(1) != 'H' || root.getName() == "ye")) {
                     formation = stem.substring(0, stem.length - 1) + 'i';
-                    this.formationToCheck = formation;
+                    formationToCheck = formation;
                 }
                 else {
                     //---lastIdropsDuringPassiveSuffixation---
@@ -277,14 +276,14 @@
                     // kavur->kavrul, kayır->kayrıl, kıvır->kıvrıl, savur->savrul, sıyır->sıyrıl, yoğur->yoğrul
                     if (rootWord && (this._with == "Hl" || this._with == "Hn") && root.lastIdropsDuringPassiveSuffixation()) {
                         formation = stem.substring(0, stem.length - 2) + stem.charAt(stem.length - 1);
-                        this.formationToCheck = stem;
+                        formationToCheck = stem;
                     }
                     else {
                         //---showsSuRegularities---
                         //karasu->karasuyu, su->suyu, ağırsu->ağırsuyu, akarsu->akarsuyu, bengisu->bengisuyu
                         if (rootWord && root.showsSuRegularities() && this.startWithVowelorConsonantDrops() && !this._with.startsWith("y")) {
                             formation = stem + 'y';
-                            this.formationToCheck = formation;
+                            formationToCheck = formation;
                         }
                         else {
                             if (rootWord && root.duplicatesDuringSuffixation() && !startState.getName().startsWith("VerbalRoot") &&
@@ -308,7 +307,7 @@
                                     // haz->hazzı, his->hissi
                                     formation = stem + stem.charAt(stem.length - 1);
                                 }
-                                this.formationToCheck = formation;
+                                formationToCheck = formation;
                             }
                             else {
                                 if (rootWord && root.lastIdropsDuringSuffixation() &&
@@ -337,7 +336,7 @@
                                         //lütuf->lütfu, metin->metni, kavim->kavmi, kasıt->kastı
                                         formation = stem.substring(0, stem.length - 2) + stem.charAt(stem.length - 1);
                                     }
-                                    this.formationToCheck = stem;
+                                    formationToCheck = stem;
                                 }
                                 else {
                                     switch (Word_1.Word.lastPhoneme(stem)) {
@@ -383,7 +382,7 @@
                                             }
                                             break;
                                     }
-                                    this.formationToCheck = formation;
+                                    formationToCheck = formation;
                                 }
                             }
                         }
@@ -423,21 +422,21 @@
                 for (; i < this._with.length; i++) {
                     switch (this._with.charAt(i)) {
                         case 'D':
-                            formation = MorphotacticEngine_1.MorphotacticEngine.resolveD(root, formation, this.formationToCheck);
+                            formation = MorphotacticEngine_1.MorphotacticEngine.resolveD(root, formation, formationToCheck);
                             break;
                         case 'A':
-                            formation = MorphotacticEngine_1.MorphotacticEngine.resolveA(root, formation, rootWord, this.formationToCheck);
+                            formation = MorphotacticEngine_1.MorphotacticEngine.resolveA(root, formation, rootWord, formationToCheck);
                             break;
                         case 'H':
                             if (this._with.charAt(0) != '\'') {
-                                formation = MorphotacticEngine_1.MorphotacticEngine.resolveH(root, formation, i == 0, this._with.startsWith("Hyor"), rootWord, this.formationToCheck);
+                                formation = MorphotacticEngine_1.MorphotacticEngine.resolveH(root, formation, i == 0, this._with.startsWith("Hyor"), rootWord, formationToCheck);
                             }
                             else {
-                                formation = MorphotacticEngine_1.MorphotacticEngine.resolveH(root, formation, i == 1, false, rootWord, this.formationToCheck);
+                                formation = MorphotacticEngine_1.MorphotacticEngine.resolveH(root, formation, i == 1, false, rootWord, formationToCheck);
                             }
                             break;
                         case 'C':
-                            formation = MorphotacticEngine_1.MorphotacticEngine.resolveC(formation, this.formationToCheck);
+                            formation = MorphotacticEngine_1.MorphotacticEngine.resolveC(formation, formationToCheck);
                             break;
                         case 'S':
                             formation = MorphotacticEngine_1.MorphotacticEngine.resolveS(formation);
@@ -453,7 +452,7 @@
                                 formation += this._with.charAt(i);
                             }
                     }
-                    this.formationToCheck = formation;
+                    formationToCheck = formation;
                 }
                 return formation;
             }

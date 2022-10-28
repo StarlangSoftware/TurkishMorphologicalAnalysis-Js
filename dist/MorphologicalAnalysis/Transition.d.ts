@@ -5,7 +5,6 @@ export declare class Transition {
     private readonly _toState;
     private readonly _with;
     private readonly withName;
-    private formationToCheck;
     private readonly _toPos;
     /**
      * Another constructor of {@link Transition} class which takes  a {@link State}, and three {@link String}s as input. Then it
