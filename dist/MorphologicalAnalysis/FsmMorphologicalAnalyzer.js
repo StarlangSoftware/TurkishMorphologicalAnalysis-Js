@@ -985,6 +985,18 @@
                 (surfaceForm.charAt(0) == '\u00c7') || (surfaceForm.charAt(0) == '\u00d6'); // İ, Ü, Ğ, Ş, Ç, Ö
         }
         /**
+         * The isCode method takes surfaceForm String as input and checks if it consists of both letters and numbers
+         *
+         * @param surfaceForm String to check for code-like word.
+         * @return true if it is a code-like word, return false otherwise.
+         */
+        isCode(surfaceForm) {
+            if (surfaceForm == undefined || surfaceForm.length == 0) {
+                return false;
+            }
+            return this.patternMatches("^.*[0-9].*$", surfaceForm) && this.patternMatches("^.*[a-zA-ZçöğüşıÇÖĞÜŞİ].*$", surfaceForm);
+        }
+        /**
          * The robustMorphologicalAnalysis is used to analyse surfaceForm String. First it gets the currentParse of the surfaceForm
          * then, if the size of the currentParse is 0, and given surfaceForm is a proper noun, it adds the surfaceForm
          * whose state name is ProperRoot to an {@link Array}, of it is not a proper noon, it adds the surfaceForm
@@ -1002,12 +1014,16 @@
                 let fsmParse = new Array();
                 if (this.isProperNoun(surfaceForm)) {
                     fsmParse.push(new FsmParse_1.FsmParse(surfaceForm, this.finiteStateMachine.getState("ProperRoot")));
-                    return new FsmParseList_1.FsmParseList(this.parseWordSurfaceForm(fsmParse, surfaceForm));
                 }
                 else {
-                    fsmParse.push(new FsmParse_1.FsmParse(surfaceForm, this.finiteStateMachine.getState("NominalRoot")));
-                    return new FsmParseList_1.FsmParseList(this.parseWordSurfaceForm(fsmParse, surfaceForm));
+                    if (this.isCode(surfaceForm)) {
+                        fsmParse.push(new FsmParse_1.FsmParse(surfaceForm, this.finiteStateMachine.getState("CodeRoot")));
+                    }
+                    else {
+                        fsmParse.push(new FsmParse_1.FsmParse(surfaceForm, this.finiteStateMachine.getState("NominalRoot")));
+                    }
                 }
+                return new FsmParseList_1.FsmParseList(this.parseWordSurfaceForm(fsmParse, surfaceForm));
             }
             else {
                 return currentParse;
@@ -1060,11 +1076,11 @@
          * @return true if surfaceForm matches with the regex.
          */
         isInteger(surfaceForm) {
-            if (!this.patternMatches("^\\+?\\d+$", surfaceForm))
+            if (!this.patternMatches("^[+-]?\\d+$", surfaceForm))
                 return false;
             let len = surfaceForm.length;
             if (len < 10) {
-                return true; //Most common scenario. Return after a single check.
+                return true;
             }
             else {
                 if (len > 10) {
@@ -1082,7 +1098,7 @@
          * @return true if surfaceForm matches with the regex.
          */
         isDouble(surfaceForm) {
-            return this.patternMatches("^\\+?(\\d+)?\\.\\d*$", surfaceForm);
+            return this.patternMatches("^[+-]?(\\d+)?\\.\\d*$", surfaceForm);
         }
         /**
          * The isNumber method compares input surfaceForm with the array of written numbers and returns the result.

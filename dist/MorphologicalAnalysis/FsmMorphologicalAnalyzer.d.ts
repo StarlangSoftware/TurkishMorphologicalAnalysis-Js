@@ -326,6 +326,13 @@ export declare class FsmMorphologicalAnalyzer {
      */
     isProperNoun(surfaceForm: string): boolean;
     /**
+     * The isCode method takes surfaceForm String as input and checks if it consists of both letters and numbers
+     *
+     * @param surfaceForm String to check for code-like word.
+     * @return true if it is a code-like word, return false otherwise.
+     */
+    isCode(surfaceForm: string): boolean;
+    /**
      * The robustMorphologicalAnalysis is used to analyse surfaceForm String. First it gets the currentParse of the surfaceForm
      * then, if the size of the currentParse is 0, and given surfaceForm is a proper noun, it adds the surfaceForm
      * whose state name is ProperRoot to an {@link Array}, of it is not a proper noon, it adds the surfaceForm
