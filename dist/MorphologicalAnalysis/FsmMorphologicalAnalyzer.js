@@ -4,7 +4,7 @@
         if (v !== undefined) module.exports = v;
     }
     else if (typeof define === "function" && define.amd) {
-        define(["require", "exports", "./FiniteStateMachine", "nlptoolkit-dictionary/dist/Dictionary/TxtDictionary", "nlptoolkit-datastructure/dist/LRUCache", "./FsmParseList", "nlptoolkit-dictionary/dist/Dictionary/WordComparator", "fs", "./Transition", "./MorphologicalTag", "nlptoolkit-dictionary/dist/Dictionary/TxtWord", "./FsmParse", "nlptoolkit-corpus/dist/Sentence", "nlptoolkit-dictionary/dist/Dictionary/Word", "./State"], factory);
+        define(["require", "exports", "./FiniteStateMachine", "nlptoolkit-dictionary/dist/Dictionary/TxtDictionary", "nlptoolkit-datastructure/dist/LRUCache", "./FsmParseList", "nlptoolkit-dictionary/dist/Dictionary/WordComparator", "fs", "./Transition", "./MorphologicalTag", "nlptoolkit-dictionary/dist/Dictionary/TxtWord", "./FsmParse", "nlptoolkit-corpus/dist/Sentence", "nlptoolkit-dictionary/dist/Dictionary/Word", "./State", "nlptoolkit-datastructure/dist/Queue"], factory);
     }
 })(function (require, exports) {
     "use strict";
@@ -23,6 +23,7 @@
     const Sentence_1 = require("nlptoolkit-corpus/dist/Sentence");
     const Word_1 = require("nlptoolkit-dictionary/dist/Dictionary/Word");
     const State_1 = require("./State");
+    const Queue_1 = require("nlptoolkit-datastructure/dist/Queue");
     class FsmMorphologicalAnalyzer {
         /**
          * Another constructor of FsmMorphologicalAnalyzer class. It generates a new TxtDictionary type dictionary from
@@ -595,7 +596,7 @@
                         let newFsmParse = currentFsmParse.clone();
                         newFsmParse.addSuffix(currentTransition.toState(), tmp, currentTransition.getWith(), currentTransition.toString(), currentTransition.toPos());
                         newFsmParse.setAgreement(currentTransition.getWith());
-                        fsmParse.push(newFsmParse);
+                        fsmParse.enqueue(newFsmParse);
                     }
                 }
             }
@@ -620,7 +621,7 @@
                         let newFsmParse = currentFsmParse.clone();
                         newFsmParse.addSuffix(currentTransition.toState(), tmp, currentTransition.getWith(), currentTransition.toString(), currentTransition.toPos());
                         newFsmParse.setAgreement(currentTransition.getWith());
-                        fsmParse.push(newFsmParse);
+                        fsmParse.enqueue(newFsmParse);
                     }
                 }
             }
@@ -633,16 +634,18 @@
          * @return true when the currentState is end state and input surfaceForm id equal to currentSurfaceForm, otherwise false.
          */
         parseExists(fsmParse, surfaceForm) {
-            while (fsmParse.length > 0) {
-                let currentFsmParse = fsmParse[0];
-                fsmParse.splice(0, 1);
+            let parseQueue = new Queue_1.Queue(1000);
+            parseQueue.enqueueAll(fsmParse);
+            while (!parseQueue.isEmpty()) {
+                let currentFsmParse = parseQueue.peek();
+                parseQueue.dequeue();
                 let root = currentFsmParse.getWord();
                 let currentState = currentFsmParse.getFinalSuffix();
                 let currentSurfaceForm = currentFsmParse.getSurfaceForm();
                 if (currentState.isEndState() && currentSurfaceForm == surfaceForm) {
                     return true;
                 }
-                this.addNewParsesFromCurrentParseSurfaceForm(currentFsmParse, fsmParse, surfaceForm, root);
+                this.addNewParsesFromCurrentParseSurfaceForm(currentFsmParse, parseQueue, surfaceForm, root);
             }
             return false;
         }
@@ -657,9 +660,11 @@
         parseWordLength(fsmParse, maxLength) {
             let result = new Array();
             let resultSuffixList = new Array();
-            while (fsmParse.length > 0) {
-                let currentFsmParse = fsmParse[0];
-                fsmParse.splice(0, 1);
+            let parseQueue = new Queue_1.Queue(1000);
+            parseQueue.enqueueAll(fsmParse);
+            while (!parseQueue.isEmpty()) {
+                let currentFsmParse = parseQueue.peek();
+                parseQueue.dequeue();
                 let root = currentFsmParse.getWord();
                 let currentState = currentFsmParse.getFinalSuffix();
                 let currentSurfaceForm = currentFsmParse.getSurfaceForm();
@@ -671,7 +676,7 @@
                         resultSuffixList.push(currentSuffixList);
                     }
                 }
-                this.addNewParsesFromCurrentParseLength(currentFsmParse, fsmParse, maxLength, root);
+                this.addNewParsesFromCurrentParseLength(currentFsmParse, parseQueue, maxLength, root);
             }
             return result;
         }
@@ -686,9 +691,11 @@
         parseWordSurfaceForm(fsmParse, surfaceForm) {
             let result = new Array();
             let resultSuffixList = new Array();
-            while (fsmParse.length > 0) {
-                let currentFsmParse = fsmParse[0];
-                fsmParse.splice(0, 1);
+            let parseQueue = new Queue_1.Queue(1000);
+            parseQueue.enqueueAll(fsmParse);
+            while (!parseQueue.isEmpty()) {
+                let currentFsmParse = parseQueue.peek();
+                parseQueue.dequeue();
                 let root = currentFsmParse.getWord();
                 let currentState = currentFsmParse.getFinalSuffix();
                 let currentSurfaceForm = currentFsmParse.getSurfaceForm();
@@ -700,7 +707,7 @@
                         resultSuffixList.push(currentSuffixList);
                     }
                 }
-                this.addNewParsesFromCurrentParseSurfaceForm(currentFsmParse, fsmParse, surfaceForm, root);
+                this.addNewParsesFromCurrentParseSurfaceForm(currentFsmParse, parseQueue, surfaceForm, root);
             }
             return result;
         }

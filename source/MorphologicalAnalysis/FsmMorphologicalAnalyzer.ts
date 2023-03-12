@@ -14,6 +14,7 @@ import {FsmParse} from "./FsmParse";
 import {Sentence} from "nlptoolkit-corpus/dist/Sentence";
 import {Word} from "nlptoolkit-dictionary/dist/Dictionary/Word";
 import {State} from "./State";
+import {Queue} from "nlptoolkit-datastructure/dist/Queue";
 
 export class FsmMorphologicalAnalyzer {
 
@@ -581,7 +582,7 @@ export class FsmMorphologicalAnalyzer {
      * @param maxLength     Maximum length of the parse.
      * @param root            TxtWord used to make transition.
      */
-    private addNewParsesFromCurrentParseLength(currentFsmParse: FsmParse, fsmParse: Array<FsmParse>,
+    private addNewParsesFromCurrentParseLength(currentFsmParse: FsmParse, fsmParse: Queue<FsmParse>,
                                          maxLength: number, root: TxtWord){
         let currentState = currentFsmParse.getFinalSuffix();
         let currentSurfaceForm = currentFsmParse.getSurfaceForm();
@@ -590,11 +591,11 @@ export class FsmMorphologicalAnalyzer {
                 (currentSurfaceForm == root.getName() && currentTransition.transitionPossibleFromRoot(root, currentState)))) {
                 let tmp = currentTransition.makeTransition(root, currentSurfaceForm, currentFsmParse.getStartState());
                 if (tmp.length <= maxLength) {
-                    let newFsmParse = currentFsmParse.clone();
+                    let newFsmParse = currentFsmParse.clone()
                     newFsmParse.addSuffix(currentTransition.toState(), tmp, currentTransition.getWith(),
-                        currentTransition.toString(), currentTransition.toPos());
-                    newFsmParse.setAgreement(currentTransition.getWith());
-                    fsmParse.push(newFsmParse);
+                        currentTransition.toString(), currentTransition.toPos())
+                    newFsmParse.setAgreement(currentTransition.getWith())
+                    fsmParse.enqueue(newFsmParse)
                 }
             }
         }
@@ -610,7 +611,7 @@ export class FsmMorphologicalAnalyzer {
      * @param surfaceForm     String to use during transition.
      * @param root            TxtWord used to make transition.
      */
-    private addNewParsesFromCurrentParseSurfaceForm(currentFsmParse: FsmParse, fsmParse: Array<FsmParse>,
+    private addNewParsesFromCurrentParseSurfaceForm(currentFsmParse: FsmParse, fsmParse: Queue<FsmParse>,
                                          surfaceForm: string, root: TxtWord){
         let currentState = currentFsmParse.getFinalSuffix();
         let currentSurfaceForm = currentFsmParse.getSurfaceForm();
@@ -618,10 +619,10 @@ export class FsmMorphologicalAnalyzer {
             if (currentTransition.transitionPossible(currentFsmParse.getSurfaceForm(), surfaceForm) && currentTransition.transitionPossibleFromParse(currentFsmParse) && (currentSurfaceForm != root.getName() || (currentSurfaceForm == root.getName() && currentTransition.transitionPossibleFromRoot(root, currentState)))) {
                 let tmp = currentTransition.makeTransition(root, currentSurfaceForm, currentFsmParse.getStartState());
                 if ((tmp.length < surfaceForm.length && this.isPossibleSubstring(tmp, surfaceForm, root)) || (tmp.length == surfaceForm.length && (root.lastIdropsDuringSuffixation() || (tmp == surfaceForm)))) {
-                    let newFsmParse = currentFsmParse.clone();
-                    newFsmParse.addSuffix(currentTransition.toState(), tmp, currentTransition.getWith(), currentTransition.toString(), currentTransition.toPos());
-                    newFsmParse.setAgreement(currentTransition.getWith());
-                    fsmParse.push(newFsmParse);
+                    let newFsmParse = currentFsmParse.clone()
+                    newFsmParse.addSuffix(currentTransition.toState(), tmp, currentTransition.getWith(), currentTransition.toString(), currentTransition.toPos())
+                    newFsmParse.setAgreement(currentTransition.getWith())
+                    fsmParse.enqueue(newFsmParse)
                 }
             }
         }
@@ -635,18 +636,20 @@ export class FsmMorphologicalAnalyzer {
      * @return true when the currentState is end state and input surfaceForm id equal to currentSurfaceForm, otherwise false.
      */
     private parseExists(fsmParse: Array<FsmParse>, surfaceForm: string){
-        while (fsmParse.length > 0) {
-            let currentFsmParse = fsmParse[0]
-            fsmParse.splice(0, 1);
-            let root = <TxtWord> currentFsmParse.getWord();
-            let currentState = currentFsmParse.getFinalSuffix();
-            let currentSurfaceForm = currentFsmParse.getSurfaceForm();
+        let parseQueue = new Queue<FsmParse>(1000)
+        parseQueue.enqueueAll(fsmParse)
+        while (!parseQueue.isEmpty()) {
+            let currentFsmParse = parseQueue.peek()
+            parseQueue.dequeue()
+            let root = <TxtWord> currentFsmParse.getWord()
+            let currentState = currentFsmParse.getFinalSuffix()
+            let currentSurfaceForm = currentFsmParse.getSurfaceForm()
             if (currentState.isEndState() && currentSurfaceForm == surfaceForm) {
-                return true;
+                return true
             }
-            this.addNewParsesFromCurrentParseSurfaceForm(currentFsmParse, fsmParse, surfaceForm, root);
+            this.addNewParsesFromCurrentParseSurfaceForm(currentFsmParse, parseQueue, surfaceForm, root)
         }
-        return false;
+        return false
     }
 
     /**
@@ -660,9 +663,11 @@ export class FsmMorphologicalAnalyzer {
     private parseWordLength(fsmParse: Array<FsmParse>, maxLength: number): Array<FsmParse>{
         let result = new Array<FsmParse>();
         let resultSuffixList = new Array<string>();
-        while (fsmParse.length > 0) {
-            let currentFsmParse = fsmParse[0]
-            fsmParse.splice(0, 1);
+        let parseQueue = new Queue<FsmParse>(1000)
+        parseQueue.enqueueAll(fsmParse)
+        while (!parseQueue.isEmpty()) {
+            let currentFsmParse = parseQueue.peek()
+            parseQueue.dequeue()
             let root = <TxtWord> currentFsmParse.getWord();
             let currentState = currentFsmParse.getFinalSuffix();
             let currentSurfaceForm = currentFsmParse.getSurfaceForm();
@@ -674,7 +679,7 @@ export class FsmMorphologicalAnalyzer {
                     resultSuffixList.push(currentSuffixList);
                 }
             }
-            this.addNewParsesFromCurrentParseLength(currentFsmParse, fsmParse, maxLength, root);
+            this.addNewParsesFromCurrentParseLength(currentFsmParse, parseQueue, maxLength, root);
         }
         return result;
     }
@@ -690,9 +695,11 @@ export class FsmMorphologicalAnalyzer {
     private parseWordSurfaceForm(fsmParse: Array<FsmParse>, surfaceForm: string): Array<FsmParse>{
         let result = new Array<FsmParse>();
         let resultSuffixList = new Array<string>();
-        while (fsmParse.length > 0) {
-            let currentFsmParse = fsmParse[0]
-            fsmParse.splice(0, 1);
+        let parseQueue = new Queue<FsmParse>(1000)
+        parseQueue.enqueueAll(fsmParse)
+        while (!parseQueue.isEmpty()) {
+            let currentFsmParse = parseQueue.peek()
+            parseQueue.dequeue()
             let root = <TxtWord> currentFsmParse.getWord();
             let currentState = currentFsmParse.getFinalSuffix();
             let currentSurfaceForm = currentFsmParse.getSurfaceForm();
@@ -704,7 +711,7 @@ export class FsmMorphologicalAnalyzer {
                     resultSuffixList.push(currentSuffixList);
                 }
             }
-            this.addNewParsesFromCurrentParseSurfaceForm(currentFsmParse, fsmParse, surfaceForm, root);
+            this.addNewParsesFromCurrentParseSurfaceForm(currentFsmParse, parseQueue, surfaceForm, root);
         }
         return result;
     }

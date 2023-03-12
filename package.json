@@ -1,6 +1,6 @@
 {
   "name": "nlptoolkit-morphologicalanalysis",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "description": "Turkish Morphological Analysis Library",
   "main": "index.js",
   "types": "index.js",
@@ -25,7 +25,7 @@
   },
   "dependencies": {
     "nlptoolkit-corpus": "^1.0.9",
-    "nlptoolkit-datastructure": "^1.0.4",
+    "nlptoolkit-datastructure": "^1.0.7",
     "nlptoolkit-dictionary": "^1.0.9",
     "nlptoolkit-ngram": "^1.0.2",
     "nlptoolkit-xmlparser": "^1.0.4"
