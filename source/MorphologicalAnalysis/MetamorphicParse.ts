@@ -523,7 +523,7 @@ export class MetamorphicParse {
         if (parse == "+") {
             this.root = new Word("+");
         } else {
-            let words = parse.split("\\+");
+            let words = parse.split("+");
             this.root = new Word(words[0]);
             for (let i = 1; i < words.length; i++){
                 this.metaMorphemeList.push(words[i]);
@@ -546,7 +546,7 @@ export class MetamorphicParse {
      * @param newTacticSet String to add the metaMorphemeList.
      */
     addMetamorphemeList(newTacticSet: string){
-        let tactics = newTacticSet.split("\\+");
+        let tactics = newTacticSet.split("+");
         for (let tactic of tactics){
             this.metaMorphemeList.push(tactic)
         }

@@ -25,7 +25,7 @@
                 this.root = new Word_1.Word("+");
             }
             else {
-                let words = parse.split("\\+");
+                let words = parse.split("+");
                 this.root = new Word_1.Word(words[0]);
                 for (let i = 1; i < words.length; i++) {
                     this.metaMorphemeList.push(words[i]);
@@ -83,7 +83,7 @@
          * @param newTacticSet String to add the metaMorphemeList.
          */
         addMetamorphemeList(newTacticSet) {
-            let tactics = newTacticSet.split("\\+");
+            let tactics = newTacticSet.split("+");
             for (let tactic of tactics) {
                 this.metaMorphemeList.push(tactic);
             }
