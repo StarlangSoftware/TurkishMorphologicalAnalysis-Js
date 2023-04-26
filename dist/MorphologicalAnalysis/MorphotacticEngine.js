@@ -149,14 +149,14 @@
                 (TurkishLanguage_1.TurkishLanguage.isBackRoundedVowel(Word_1.Word.lastVowel(formationToCheck)) && root.notObeysVowelHarmonyDuringAgglutination())) {
                 return formation + 'ü';
             }
-            if (TurkishLanguage_1.TurkishLanguage.isFrontUnroundedVowel(Word_1.Word.lastVowel(formationToCheck)) ||
-                (Word_1.Word.lastVowel(formationToCheck) == 'a' && root.notObeysVowelHarmonyDuringAgglutination())) {
+            if ((TurkishLanguage_1.TurkishLanguage.isFrontUnroundedVowel(Word_1.Word.lastVowel(formationToCheck)) && !root.notObeysVowelHarmonyDuringAgglutination()) ||
+                ((Word_1.Word.lastVowel(formationToCheck) == 'a' || Word_1.Word.lastVowel(formationToCheck) == 'â') && root.notObeysVowelHarmonyDuringAgglutination())) {
                 return formation + 'i';
             }
             if (TurkishLanguage_1.TurkishLanguage.isBackRoundedVowel(Word_1.Word.lastVowel(formationToCheck))) {
                 return formation + 'u';
             }
-            if (TurkishLanguage_1.TurkishLanguage.isBackUnroundedVowel(Word_1.Word.lastVowel(formationToCheck))) {
+            if (TurkishLanguage_1.TurkishLanguage.isBackUnroundedVowel(Word_1.Word.lastVowel(formationToCheck)) || (TurkishLanguage_1.TurkishLanguage.isFrontUnroundedVowel(Word_1.Word.lastVowel(formationToCheck)) && root.notObeysVowelHarmonyDuringAgglutination())) {
                 return formation + 'ı';
             }
             if (root.isNumeral() || root.isFraction() || root.isReal()) {

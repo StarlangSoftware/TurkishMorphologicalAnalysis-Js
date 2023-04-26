@@ -36,6 +36,15 @@ describe('FsmMorphologicalAnalyzerTest', function() {
             }
         });
 
+        it('morphologicalAnalysisSpecialProperNoun', function() {
+            assert.ok(fsm.morphologicalAnalysis("Times'ın").size() != 0);
+            assert.ok(fsm.morphologicalAnalysis("Times'tır").size() != 0);
+            assert.ok(fsm.morphologicalAnalysis("Times'mış").size() != 0);
+            assert.ok(fsm.morphologicalAnalysis("Twitter'ın").size() != 0);
+            assert.ok(fsm.morphologicalAnalysis("Twitter'dır").size() != 0);
+            assert.ok(fsm.morphologicalAnalysis("Twitter'mış").size() != 0);
+        });
+
         it('morphologicalAnalysisDataTimeNumber', function() {
             assert.ok(fsm.morphologicalAnalysis("3/4").size() != 0);
             assert.ok(fsm.morphologicalAnalysis("3\\/4").size() != 0);
