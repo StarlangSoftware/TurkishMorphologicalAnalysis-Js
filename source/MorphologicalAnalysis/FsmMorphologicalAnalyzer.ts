@@ -19,6 +19,7 @@ import {Queue} from "nlptoolkit-datastructure/dist/Queue";
 export class FsmMorphologicalAnalyzer {
 
     private dictionaryTrie: Trie
+    private suffixTrie: Trie
     private parsedSurfaceForms: Map<string, string> = undefined
     private finiteStateMachine: FiniteStateMachine
     private static MAX_DISTANCE = 2
@@ -51,9 +52,28 @@ export class FsmMorphologicalAnalyzer {
         } else {
             this.finiteStateMachine = new FiniteStateMachine(fileName);
         }
+        this.prepareSuffixTrie();
         this.dictionaryTrie = this.dictionary.prepareTrie();
         if (cacheSize > 0){
             this.cache = new LRUCache<string, FsmParseList>(cacheSize);
+        }
+    }
+
+    private reverseString(s: string): string{
+        let result = ""
+        for (let i = s.length - 1; i >= 0; i--){
+            result += s[i]
+        }
+        return result
+    }
+
+    private prepareSuffixTrie(){
+        this.suffixTrie = new Trie()
+        let data = fs.readFileSync("suffixes.txt", 'utf8')
+        let lines = data.split("\n")
+        for (let suffix of lines) {
+            let reverseSuffix = this.reverseString(suffix)
+            this.suffixTrie.addWord(reverseSuffix, new Word(reverseSuffix))
         }
     }
 
@@ -1011,6 +1031,32 @@ export class FsmMorphologicalAnalyzer {
         return this.patternMatches("^.*[0-9].*$", surfaceForm) && this.patternMatches("^.*[a-zA-ZçöğüşıÇÖĞÜŞİ].*$", surfaceForm);
     }
 
+    private rootOfPossiblyNewWord(surfaceForm: string): TxtWord{
+        let words = this.suffixTrie.getWordsWithPrefix(this.reverseString(surfaceForm))
+        let maxLength = 0
+        let longestWord = null
+        for (let word of words){
+            if (word.getName().length > maxLength){
+                longestWord = surfaceForm.substring(0, surfaceForm.length - word.getName().length)
+                maxLength = word.getName().length
+            }
+        }
+        if (maxLength != 0){
+            let newWord
+            if (longestWord.endsWith("ğ")){
+                longestWord = longestWord.substring(0, longestWord.length - 1) + "k"
+                newWord = new TxtWord(longestWord, "CL_ISIM")
+                newWord.addFlag("IS_SD")
+            } else {
+                newWord = new TxtWord(longestWord, "CL_ISIM")
+                newWord.addFlag("CL_FIIL")
+            }
+            this.dictionaryTrie.addWord(longestWord, newWord)
+            return newWord
+        }
+        return null
+    }
+
     /**
      * The robustMorphologicalAnalysis is used to analyse surfaceForm String. First it gets the currentParse of the surfaceForm
      * then, if the size of the currentParse is 0, and given surfaceForm is a proper noun, it adds the surfaceForm
@@ -1028,12 +1074,18 @@ export class FsmMorphologicalAnalyzer {
         if (currentParse.size() == 0) {
             let fsmParse = new Array<FsmParse>();
             if (this.isProperNoun(surfaceForm)) {
-                fsmParse.push(new FsmParse(surfaceForm, this.finiteStateMachine.getState("ProperRoot")));
+                fsmParse.push(new FsmParse(surfaceForm, this.finiteStateMachine.getState("ProperRoot")))
             } else {
                 if (this.isCode(surfaceForm)) {
-                    fsmParse.push(new FsmParse(surfaceForm, this.finiteStateMachine.getState("CodeRoot")));
+                    fsmParse.push(new FsmParse(surfaceForm, this.finiteStateMachine.getState("CodeRoot")))
                 } else {
-                    fsmParse.push(new FsmParse(surfaceForm, this.finiteStateMachine.getState("NominalRoot")));
+                    let newRoot = this.rootOfPossiblyNewWord(surfaceForm)
+                    if (newRoot != null){
+                        fsmParse.push(new FsmParse(newRoot, this.finiteStateMachine.getState("VerbalRoot")))
+                        fsmParse.push(new FsmParse(newRoot, this.finiteStateMachine.getState("NominalRoot")))
+                    } else {
+                        fsmParse.push(new FsmParse(surfaceForm, this.finiteStateMachine.getState("NominalRoot")))
+                    }
                 }
             }
             return new FsmParseList(this.parseWordSurfaceForm(fsmParse, surfaceForm));

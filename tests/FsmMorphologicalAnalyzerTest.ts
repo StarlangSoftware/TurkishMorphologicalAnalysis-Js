@@ -45,6 +45,13 @@ describe('FsmMorphologicalAnalyzerTest', function() {
             assert.ok(fsm.morphologicalAnalysis("Twitter'mış").size() != 0);
         });
 
+        it('morphologicalAnalysisNewWords', function() {
+            assert.ok(fsm.robustMorphologicalAnalysis("googlecılardan").size() != 0);
+            assert.ok(fsm.robustMorphologicalAnalysis("zaptıraplaştırılmayana").size() != 0);
+            assert.ok(fsm.robustMorphologicalAnalysis("abzürtleşenmiş").size() != 0);
+            assert.ok(fsm.robustMorphologicalAnalysis("vışlığından").size() != 0);
+        });
+
         it('morphologicalAnalysisDataTimeNumber', function() {
             assert.ok(fsm.morphologicalAnalysis("3/4").size() != 0);
             assert.ok(fsm.morphologicalAnalysis("3\\/4").size() != 0);

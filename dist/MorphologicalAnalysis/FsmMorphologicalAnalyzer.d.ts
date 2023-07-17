@@ -8,6 +8,7 @@ import { FsmParse } from "./FsmParse";
 import { Sentence } from "nlptoolkit-corpus/dist/Sentence";
 export declare class FsmMorphologicalAnalyzer {
     private dictionaryTrie;
+    private suffixTrie;
     private parsedSurfaceForms;
     private finiteStateMachine;
     private static MAX_DISTANCE;
@@ -23,6 +24,8 @@ export declare class FsmMorphologicalAnalyzer {
      * @param cacheSize  the size of the LRUCache.
      */
     constructor(fileName?: string, dictionaryFileNameOrDictionary?: any, cacheSize?: number);
+    private reverseString;
+    private prepareSuffixTrie;
     addParsedSurfaceForms(fileName: string): void;
     /**
      * The getPossibleWords method takes {@link MorphologicalParse} and {@link MetamorphicParse} as input.
@@ -332,6 +335,7 @@ export declare class FsmMorphologicalAnalyzer {
      * @return true if it is a code-like word, return false otherwise.
      */
     isCode(surfaceForm: string): boolean;
+    private rootOfPossiblyNewWord;
     /**
      * The robustMorphologicalAnalysis is used to analyse surfaceForm String. First it gets the currentParse of the surfaceForm
      * then, if the size of the currentParse is 0, and given surfaceForm is a proper noun, it adds the surfaceForm

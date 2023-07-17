@@ -4,12 +4,13 @@
         if (v !== undefined) module.exports = v;
     }
     else if (typeof define === "function" && define.amd) {
-        define(["require", "exports", "./FiniteStateMachine", "nlptoolkit-dictionary/dist/Dictionary/TxtDictionary", "nlptoolkit-datastructure/dist/LRUCache", "./FsmParseList", "nlptoolkit-dictionary/dist/Dictionary/WordComparator", "fs", "./Transition", "./MorphologicalTag", "nlptoolkit-dictionary/dist/Dictionary/TxtWord", "./FsmParse", "nlptoolkit-corpus/dist/Sentence", "nlptoolkit-dictionary/dist/Dictionary/Word", "./State", "nlptoolkit-datastructure/dist/Queue"], factory);
+        define(["require", "exports", "nlptoolkit-dictionary/dist/Dictionary/Trie/Trie", "./FiniteStateMachine", "nlptoolkit-dictionary/dist/Dictionary/TxtDictionary", "nlptoolkit-datastructure/dist/LRUCache", "./FsmParseList", "nlptoolkit-dictionary/dist/Dictionary/WordComparator", "fs", "./Transition", "./MorphologicalTag", "nlptoolkit-dictionary/dist/Dictionary/TxtWord", "./FsmParse", "nlptoolkit-corpus/dist/Sentence", "nlptoolkit-dictionary/dist/Dictionary/Word", "./State", "nlptoolkit-datastructure/dist/Queue"], factory);
     }
 })(function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.FsmMorphologicalAnalyzer = void 0;
+    const Trie_1 = require("nlptoolkit-dictionary/dist/Dictionary/Trie/Trie");
     const FiniteStateMachine_1 = require("./FiniteStateMachine");
     const TxtDictionary_1 = require("nlptoolkit-dictionary/dist/Dictionary/TxtDictionary");
     const LRUCache_1 = require("nlptoolkit-datastructure/dist/LRUCache");
@@ -54,9 +55,26 @@
             else {
                 this.finiteStateMachine = new FiniteStateMachine_1.FiniteStateMachine(fileName);
             }
+            this.prepareSuffixTrie();
             this.dictionaryTrie = this.dictionary.prepareTrie();
             if (cacheSize > 0) {
                 this.cache = new LRUCache_1.LRUCache(cacheSize);
+            }
+        }
+        reverseString(s) {
+            let result = "";
+            for (let i = s.length - 1; i >= 0; i--) {
+                result += s[i];
+            }
+            return result;
+        }
+        prepareSuffixTrie() {
+            this.suffixTrie = new Trie_1.Trie();
+            let data = fs.readFileSync("suffixes.txt", 'utf8');
+            let lines = data.split("\n");
+            for (let suffix of lines) {
+                let reverseSuffix = this.reverseString(suffix);
+                this.suffixTrie.addWord(reverseSuffix, new Word_1.Word(reverseSuffix));
             }
         }
         addParsedSurfaceForms(fileName) {
@@ -1003,6 +1021,32 @@
             }
             return this.patternMatches("^.*[0-9].*$", surfaceForm) && this.patternMatches("^.*[a-zA-ZçöğüşıÇÖĞÜŞİ].*$", surfaceForm);
         }
+        rootOfPossiblyNewWord(surfaceForm) {
+            let words = this.suffixTrie.getWordsWithPrefix(this.reverseString(surfaceForm));
+            let maxLength = 0;
+            let longestWord = null;
+            for (let word of words) {
+                if (word.getName().length > maxLength) {
+                    longestWord = surfaceForm.substring(0, surfaceForm.length - word.getName().length);
+                    maxLength = word.getName().length;
+                }
+            }
+            if (maxLength != 0) {
+                let newWord;
+                if (longestWord.endsWith("ğ")) {
+                    longestWord = longestWord.substring(0, longestWord.length - 1) + "k";
+                    newWord = new TxtWord_1.TxtWord(longestWord, "CL_ISIM");
+                    newWord.addFlag("IS_SD");
+                }
+                else {
+                    newWord = new TxtWord_1.TxtWord(longestWord, "CL_ISIM");
+                    newWord.addFlag("CL_FIIL");
+                }
+                this.dictionaryTrie.addWord(longestWord, newWord);
+                return newWord;
+            }
+            return null;
+        }
         /**
          * The robustMorphologicalAnalysis is used to analyse surfaceForm String. First it gets the currentParse of the surfaceForm
          * then, if the size of the currentParse is 0, and given surfaceForm is a proper noun, it adds the surfaceForm
@@ -1027,7 +1071,14 @@
                         fsmParse.push(new FsmParse_1.FsmParse(surfaceForm, this.finiteStateMachine.getState("CodeRoot")));
                     }
                     else {
-                        fsmParse.push(new FsmParse_1.FsmParse(surfaceForm, this.finiteStateMachine.getState("NominalRoot")));
+                        let newRoot = this.rootOfPossiblyNewWord(surfaceForm);
+                        if (newRoot != null) {
+                            fsmParse.push(new FsmParse_1.FsmParse(newRoot, this.finiteStateMachine.getState("VerbalRoot")));
+                            fsmParse.push(new FsmParse_1.FsmParse(newRoot, this.finiteStateMachine.getState("NominalRoot")));
+                        }
+                        else {
+                            fsmParse.push(new FsmParse_1.FsmParse(surfaceForm, this.finiteStateMachine.getState("NominalRoot")));
+                        }
                     }
                 }
                 return new FsmParseList_1.FsmParseList(this.parseWordSurfaceForm(fsmParse, surfaceForm));
