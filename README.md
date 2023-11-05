@@ -32,7 +32,7 @@ For Developers
 ============
 
 You can also see [Python](https://github.com/starlangsoftware/TurkishMorphologicalAnalysis-Py), 
-[Java](https://github.com/starlangsoftware/TurkishMorphologicalAnalysis), [C++](https://github.com/starlangsoftware/TurkishMorphologicalAnalysis-CPP), 
+[Java](https://github.com/starlangsoftware/TurkishMorphologicalAnalysis), [C++](https://github.com/starlangsoftware/TurkishMorphologicalAnalysis-CPP), [C](https://github.com/starlangsoftware/TurkishMorphologicalAnalysis-C),
 [Swift](https://github.com/starlangsoftware/TurkishMorphologicalAnalysis-Swift), [Cython](https://github.com/starlangsoftware/TurkishMorphologicalAnalysis-Cy),
 or [C#](https://github.com/starlangsoftware/TurkishMorphologicalAnalysis-CS) repository.
 
