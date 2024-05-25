@@ -21,10 +21,10 @@ export class FsmMorphologicalAnalyzer {
     private dictionaryTrie: Trie
     private suffixTrie: Trie
     private parsedSurfaceForms: Map<string, string> = undefined
-    private finiteStateMachine: FiniteStateMachine
+    private readonly finiteStateMachine: FiniteStateMachine
     private static MAX_DISTANCE = 2
-    private dictionary: TxtDictionary
-    private cache: LRUCache<string, FsmParseList> = undefined
+    private readonly dictionary: TxtDictionary
+    private readonly cache: LRUCache<string, FsmParseList> = undefined
     private mostUsedPatterns: Map<string, RegExp> = new Map<string, RegExp>()
 
     /**
@@ -59,6 +59,11 @@ export class FsmMorphologicalAnalyzer {
         }
     }
 
+    /**
+     * Constructs and returns the reverse string of a given string.
+     * @param s String to be reversed.
+     * @return Reverse of a given string.
+     */
     private reverseString(s: string): string{
         let result = ""
         for (let i = s.length - 1; i >= 0; i--){
@@ -67,6 +72,11 @@ export class FsmMorphologicalAnalyzer {
         return result
     }
 
+    /**
+     * Constructs the suffix trie from the input file suffixes.txt. suffixes.txt contains the most frequent 6000
+     * suffixes that a verb or a noun can take. The suffix trie is a trie that stores these suffixes in reverse form,
+     * which can be then used to match a given word for its possible suffix content.
+     */
     private prepareSuffixTrie(){
         this.suffixTrie = new Trie()
         let data = fs.readFileSync("suffixes.txt", 'utf8')
@@ -77,6 +87,11 @@ export class FsmMorphologicalAnalyzer {
         }
     }
 
+    /**
+     * Reads the file for correct surface forms and their most frequent root forms, in other words, the surface forms
+     * which have at least one morphological analysis in  Turkish.
+     * @param fileName Input file containing analyzable surface forms and their root forms.
+     */
     addParsedSurfaceForms(fileName: string){
         this.parsedSurfaceForms = new Map<string, string>()
         let data = fs.readFileSync(fileName, 'utf8')
@@ -993,6 +1008,15 @@ export class FsmMorphologicalAnalyzer {
         return this.parseWordSurfaceForm(initialFsmParse, surfaceForm);
     }
 
+    /**
+     * This method uses cache idea to speed up pattern matching in Fsm. mostUsedPatterns stores the compiled forms of
+     * the previously used patterns. When Fsm tries to match a string to a pattern, first we check if it exists in
+     * mostUsedPatterns. If it exists, we directly use the compiled pattern to match the string. Otherwise, new pattern
+     * is compiled and put in the mostUsedPatterns.
+     * @param expr Pattern to check
+     * @param value String to match the pattern
+     * @return True if the string matches the pattern, false otherwise.
+     */
     private patternMatches(expr: string, value: string): boolean{
         let p = this.mostUsedPatterns.get(expr);
         if (p == undefined){
@@ -1031,6 +1055,19 @@ export class FsmMorphologicalAnalyzer {
         return this.patternMatches("^.*[0-9].*$", surfaceForm) && this.patternMatches("^.*[a-zA-ZçöğüşıÇÖĞÜŞİ].*$", surfaceForm);
     }
 
+    /**
+     * Identifies a possible new root word for a given surface form. It also adds the new root form to the dictionary
+     * for further usage. The method first searches the suffix trie for the reverse string of the surface form. This
+     * way, it can identify if the word has a suffix that is in the most frequently used suffix list. Since a word can
+     * have multiple possible suffixes, the method identifies the longest suffix and returns the substring of the
+     * surface form tht does not contain the suffix. Let say the word is 'googlelaştırdık', it will identify 'tık' as
+     * a suffix and will return 'googlelaştır' as a possible root form. Another example will be 'homelesslerimizle', it
+     * will identify 'lerimizle' as suffix and will return 'homeless' as a possible root form. If the root word ends
+     * with 'ğ', it is replacesd with 'k'. 'morfolojikliğini' will return 'morfolojikliğ' then which will be replaced
+     * with 'morfolojiklik'.
+     * @param surfaceForm Surface form for which we will identify a possible new root form.
+     * @return Possible new root form.
+     */
     private rootOfPossiblyNewWord(surfaceForm: string): TxtWord{
         let words = this.suffixTrie.getWordsWithPrefix(this.reverseString(surfaceForm))
         let maxLength = 0
@@ -1196,22 +1233,43 @@ export class FsmMorphologicalAnalyzer {
         return word == "" && count > 1;
     }
 
+    /**
+     * Checks if a given surface form matches to a percent value. It should be something like %4, %45, %4.3 or %56.786
+     * @param surfaceForm Surface form to be checked.
+     * @return True if the surface form is in percent form
+     */
     private isPercent(surfaceForm: string): boolean{
         return this.patternMatches("^%(\\d\\d|\\d)$", surfaceForm) ||
             this.patternMatches("^%(\\d\\d|\\d)\\.\\d+$", surfaceForm);
     }
 
+    /**
+     * Checks if a given surface form matches to a time form. It should be something like 3:34, 12:56 etc.
+     * @param surfaceForm Surface form to be checked.
+     * @return True if the surface form is in time form
+     */
     private isTime(surfaceForm: string): boolean{
         return this.patternMatches("^(\\d\\d|\\d):(\\d\\d|\\d):(\\d\\d|\\d)$", surfaceForm) ||
             this.patternMatches("^(\\d\\d|\\d):(\\d\\d|\\d)$", surfaceForm);
     }
 
+    /**
+     * Checks if a given surface form matches to a range form. It should be something like 123-1400 or 12:34-15:78 or
+     * 3.45-4.67.
+     * @param surfaceForm Surface form to be checked.
+     * @return True if the surface form is in range form
+     */
     private isRange(surfaceForm: string): boolean{
         return this.patternMatches("^\\d+-\\d+$", surfaceForm) ||
             this.patternMatches("^(\\d\\d|\\d):(\\d\\d|\\d)-(\\d\\d|\\d):(\\d\\d|\\d)$", surfaceForm) ||
             this.patternMatches("^(\\d\\d|\\d)\\.(\\d\\d|\\d)-(\\d\\d|\\d)\\.(\\d\\d|\\d)$", surfaceForm);
     }
 
+    /**
+     * Checks if a given surface form matches to a date form. It should be something like 3/10/2023 or 2.3.2012
+     * @param surfaceForm Surface form to be checked.
+     * @return True if the surface form is in date form
+     */
     private isDate(surfaceForm: string): boolean{
         return this.patternMatches("^(\\d\\d|\\d)/(\\d\\d|\\d)/\\d+$", surfaceForm) ||
             this.patternMatches("^(\\d\\d|\\d)\\.(\\d\\d|\\d)\\.\\d+$", surfaceForm);

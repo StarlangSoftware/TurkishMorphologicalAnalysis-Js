@@ -527,6 +527,12 @@
             }
             return "-XXX-";
         }
+        /**
+         * Returns the pronoun type of the parse for universal dependency feature ProType.
+         * @return "Art" if the pronoun is also a determiner; "Prs" if the pronoun is personal pronoun; "Rcp" if the
+         * pronoun is 'birbiri'; "Ind" if the pronoun is an indeterminate pronoun; "Neg" if the pronoun is 'hiçbiri';
+         * "Int" if the pronoun is a question pronoun; "Dem" if the pronoun is a demonstrative pronoun.
+         */
         getPronType() {
             let lemma = this.root.getName();
             if (this.containsTag(MorphologicalTag_1.MorphologicalTag.DETERMINER)) {
@@ -559,6 +565,11 @@
             }
             return undefined;
         }
+        /**
+         * Returns the numeral type of the parse for universal dependency feature NumType.
+         * @return "Ord" if the parse is Time, Ordinal or the word is '%' or 'kaçıncı'; "Dist" if the word is a
+         * distributive number such as 'beşinci'; "Card" if the number is cardinal or any number or the word is 'kaç'.
+         */
         getNumType() {
             let lemma = this.root.getName();
             if (lemma == "%" || this.containsTag(MorphologicalTag_1.MorphologicalTag.TIME)) {
@@ -575,6 +586,10 @@
             }
             return undefined;
         }
+        /**
+         * Returns the value for the dependency feature Reflex.
+         * @return "Yes" if the root word is 'kendi', null otherwise.
+         */
         getReflex() {
             let lemma = this.root.getName();
             if (lemma == "kendi") {
@@ -582,6 +597,11 @@
             }
             return undefined;
         }
+        /**
+         * Returns the agreement of the parse for the universal dependency feature Number.
+         * @return "Sing" if the agreement of the parse is singular (contains A1SG, A2SG, A3SG); "Plur" if the agreement
+         * of the parse is plural (contains A1PL, A2PL, A3PL).
+         */
         getNumber() {
             if (this.containsTag(MorphologicalTag_1.MorphologicalTag.A1SG) || this.containsTag(MorphologicalTag_1.MorphologicalTag.A2SG) ||
                 this.containsTag(MorphologicalTag_1.MorphologicalTag.A3SG)) {
@@ -593,6 +613,11 @@
             }
             return undefined;
         }
+        /**
+         * Returns the possessive agreement of the parse for the universal dependency feature [Pos].
+         * @return "Sing" if the possessive agreement of the parse is singular (contains P1SG, P2SG, P3SG); "Plur" if the
+         * possessive agreement of the parse is plural (contains P1PL, P2PL, P3PL).
+         */
         getPossessiveNumber() {
             if (this.containsTag(MorphologicalTag_1.MorphologicalTag.P1SG) || this.containsTag(MorphologicalTag_1.MorphologicalTag.P2SG) ||
                 this.containsTag(MorphologicalTag_1.MorphologicalTag.P3SG)) {
@@ -604,6 +629,11 @@
             }
             return undefined;
         }
+        /**
+         * Returns the case marking of the parse for the universal dependency feature case.
+         * @return "Acc" for accusative marker; "Dat" for dative marker; "Gen" for genitive marker; "Loc" for locative
+         * marker; "Ins" for instrumentative marker; "Abl" for ablative marker; "Nom" for nominative marker.
+         */
         getCase() {
             if (this.containsTag(MorphologicalTag_1.MorphologicalTag.ACCUSATIVE) || this.containsTag(MorphologicalTag_1.MorphologicalTag.PCACCUSATIVE)) {
                 return "Acc";
@@ -628,6 +658,11 @@
             }
             return undefined;
         }
+        /**
+         * Returns the definiteness of the parse for the universal dependency feature definite. It applies only for
+         * determiners in Turkish.
+         * @return "Ind" for 'bir', 'bazı', or 'birkaç'. "Def" for 'her', 'bu', 'şu', 'o', 'bütün'.
+         */
         getDefinite() {
             let lemma = this.root.getName();
             if (this.containsTag(MorphologicalTag_1.MorphologicalTag.DETERMINER)) {
@@ -640,6 +675,10 @@
             }
             return undefined;
         }
+        /**
+         * Returns the degree of the parse for the universal dependency feature degree.
+         * @return "Cmp" for comparative adverb 'daha'; "Sup" for superlative adjective or adverb 'en'.
+         */
         getDegree() {
             let lemma = this.root.getName();
             if (lemma == "daha") {
@@ -650,6 +689,10 @@
             }
             return undefined;
         }
+        /**
+         * Returns the polarity of the verb for the universal dependency feature polarity.
+         * @return "Pos" for positive polarity containing tag POS; "Neg" for negative polarity containing tag NEG.
+         */
         getPolarity() {
             if (this.containsTag(MorphologicalTag_1.MorphologicalTag.POSITIVE)) {
                 return "Pos";
@@ -659,6 +702,10 @@
             }
             return undefined;
         }
+        /**
+         * Returns the person of the agreement of the parse for the universal dependency feature person.
+         * @return "1" for first person; "2" for second person; "3" for third person.
+         */
         getPerson() {
             if (this.containsTag(MorphologicalTag_1.MorphologicalTag.A1SG) || this.containsTag(MorphologicalTag_1.MorphologicalTag.A1PL)) {
                 return "1";
@@ -671,6 +718,10 @@
             }
             return undefined;
         }
+        /**
+         * Returns the person of the possessive agreement of the parse for the universal dependency feature [pos].
+         * @return "1" for first person; "2" for second person; "3" for third person.
+         */
         getPossessivePerson() {
             if (this.containsTag(MorphologicalTag_1.MorphologicalTag.P1SG) || this.containsTag(MorphologicalTag_1.MorphologicalTag.P1PL)) {
                 return "1";
@@ -683,6 +734,12 @@
             }
             return undefined;
         }
+        /**
+         * Returns the voice of the verb parse for the universal dependency feature voice.
+         * @return "CauPass" if the verb parse is both causative and passive; "Pass" if the verb parse is only passive;
+         * "Rcp" if the verb parse is reciprocal; "Cau" if the verb parse is only causative; "Rfl" if the verb parse is
+         * reflexive.
+         */
         getVoice() {
             if (this.containsTag(MorphologicalTag_1.MorphologicalTag.CAUSATIVE) && this.containsTag(MorphologicalTag_1.MorphologicalTag.PASSIVE)) {
                 return "CauPass";
@@ -701,6 +758,11 @@
             }
             return undefined;
         }
+        /**
+         * Returns the aspect of the verb parse for the universal dependency feature aspect.
+         * @return "Perf" for past, narrative and future tenses; "Prog" for progressive tenses; "Hab" for Aorist; "Rapid"
+         * for parses containing HASTILY tag; "Dur" for parses containing START, STAY or REPEAT tags.
+         */
         getAspect() {
             if (this.containsTag(MorphologicalTag_1.MorphologicalTag.PASTTENSE) || this.containsTag(MorphologicalTag_1.MorphologicalTag.NARRATIVE) ||
                 this.containsTag(MorphologicalTag_1.MorphologicalTag.FUTURE)) {
@@ -721,6 +783,11 @@
             }
             return undefined;
         }
+        /**
+         * Returns the tense of the verb parse for universal dependency feature tense.
+         * @return "Past" for simple past tense; "Fut" for future tense; "Pqp" for narrative past tense; "Pres" for other
+         * past tenses.
+         */
         getTense() {
             if (this.containsTag(MorphologicalTag_1.MorphologicalTag.PASTTENSE)) {
                 return "Past";
@@ -736,6 +803,19 @@
             }
             return undefined;
         }
+        /**
+         * Returns the modality of the verb parse for the universal dependency feature mood.
+         * @return "GenNecPot" if both necessitative and potential is combined with a suffix of general modality;
+         * "CndGenPot" if both conditional and potential is combined with a suffix of general modality;
+         * "GenNec" if necessitative is combined with a suffix of general modality;
+         * "GenPot" if potential is combined with a suffix of general modality;
+         * "NecPot" if necessitative is combined with potential;
+         * "DesPot" if desiderative is combined with potential;
+         * "CndPot" if conditional is combined with potential;
+         * "CndGen" if conditional is combined with a suffix of general modality;
+         * "Imp" for imperative; "Cnd" for simple conditional; "Des" for simple desiderative; "Opt" for optative; "Nec" for
+         * simple necessitative; "Pot" for simple potential; "Gen" for simple suffix of a general modality.
+         */
         getMood() {
             if ((this.containsTag(MorphologicalTag_1.MorphologicalTag.COPULA) || this.containsTag(MorphologicalTag_1.MorphologicalTag.AORIST)) &&
                 this.containsTag(MorphologicalTag_1.MorphologicalTag.NECESSITY) && this.containsTag(MorphologicalTag_1.MorphologicalTag.ABLE)) {
@@ -797,6 +877,11 @@
             }
             return undefined;
         }
+        /**
+         * Returns the form of the verb parse for the universal dependency feature verbForm.
+         * @return "Part" for participles; "Vnoun" for infinitives; "Conv" for parses contaning tags SINCEDOINGSO,
+         * WITHOUTHAVINGDONESO, WITHOUTBEINGABLETOHAVEDONESO, BYDOINGSO, AFTERDOINGSO, INFINITIVE3; "Fin" for others.
+         */
         getVerbForm() {
             if (this.containsTag(MorphologicalTag_1.MorphologicalTag.PASTPARTICIPLE) || this.containsTag(MorphologicalTag_1.MorphologicalTag.FUTUREPARTICIPLE) ||
                 this.containsTag(MorphologicalTag_1.MorphologicalTag.PRESENTPARTICIPLE)) {
@@ -822,6 +907,12 @@
             }
             return undefined;
         }
+        /**
+         * Construct the universal dependency features as an array of strings. Each element represents a single feature.
+         * Every feature is given as featureType = featureValue.
+         * @param uPos Universal dependency part of speech tag for the parse.
+         * @return An array of universal dependency features for this parse.
+         */
         getUniversalDependencyFeatures(uPos) {
             let featureList = new Array();
             let pronType = this.getPronType();
@@ -899,6 +990,12 @@
             featureList.sort();
             return featureList;
         }
+        /**
+         * Returns the universal dependency part of speech for this parse.
+         * @return "AUX" for word 'değil; "PROPN" for proper nouns; "NOUN for nouns; "ADJ" for adjectives; "ADV" for
+         * adverbs; "INTJ" for interjections; "VERB" for verbs; "PUNCT" for punctuation symbols; "DET" for determiners;
+         * "NUM" for numerals; "PRON" for pronouns; "ADP" for post participles; "SCONJ" or "CCONJ" for conjunctions.
+         */
         getUniversalDependencyPos() {
             let lemma = this.root.getName();
             if (lemma == "değil") {

@@ -1,6 +1,5 @@
 import {MorphologicalParse} from "./MorphologicalParse";
 import {State} from "./State";
-import {Word} from "nlptoolkit-dictionary/dist/Dictionary/Word";
 import {TxtWord} from "nlptoolkit-dictionary/dist/Dictionary/TxtWord";
 import {InflectionalGroup} from "./InflectionalGroup";
 import {Transition} from "./Transition";

@@ -122,6 +122,13 @@ export class Transition {
         return true;
     }
 
+    /**
+     * The transitionPossibleFromRoot method takes root and current parse as inputs. It then checks some special cases.
+     *
+     * @param root Current root word
+     * @param fromState From which state we arrived to this state.
+     * @return true if transition is possible false otherwise
+     */
     transitionPossibleFromRoot(root: TxtWord, fromState: State){
         if (root.isAdjective() && ((root.isNominal() && !root.isExceptional()) || root.isPronoun()) && this._toState.getName() == "NominalRoot(ADJ)" && this._with == "0") {
             return false;
@@ -225,14 +232,21 @@ export class Transition {
     }
 
     /**
-     * The makeTransition method takes a {@link TxtWord} root and s {@link String} stem as inputs. If given root is a verb,
-     * it makes transition with given root and stem with the verbal root state. If given root is not verb, it makes transition
-     * with given root and stem and the nominal root state.
-     *
-     * @param root {@link TxtWord} input.
-     * @param stem String input.
-     * @param startState Start state to make the transition.
-     * @return String type output that has the transition.
+     * The method is main driving method to accomplish the current transition from one state to another depending on
+     * the root form of the word, current value of the word form, and the type of the start state. The method
+     * (a) returns the original word form if the transition is an epsilon transition, (b) adds 'nunla' if the current
+     * stem is 'bu', 'şu' or 'o', (c) returns 'bana' or 'sana' if the current stem is 'ben' or 'sen' respectively.
+     * For other cases, the method first modifies current stem and then adds the transition using special metamorpheme
+     * resolving methods. These cases are: (d) Converts 'y' of the first character of the transition to 'i' if the
+     * current stem is 'ye' or 'de'. (e) Drops the last two characters and adds last character when the transition is
+     * ('Hl' or 'Hn') and last 'I' drops during passive suffixation. (f) Adds 'y' character when the word ends with 'su'
+     * and the transition does not start with 'y'. (g) Adds the last character again when the root duplicates during
+     * suffixation. (h) Drops the last two characters and adds the last character when last 'i' drops during
+     * suffixation. (i) Replaces the last character with a soft one when the root soften during suffixation.
+     * @param root Root of the current word form
+     * @param stem Current word form
+     * @param startState The state from which this Fsm morphological analysis search has started.
+     * @return The current value of the word form after this transition is completed in the finite state machine.
      */
     makeTransition(root: TxtWord, stem: string, startState?: State): string{
         if (startState == undefined){
