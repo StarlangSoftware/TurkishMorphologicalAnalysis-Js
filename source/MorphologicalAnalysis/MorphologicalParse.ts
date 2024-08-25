@@ -714,6 +714,9 @@ export class MorphologicalParse {
      * @return "Pos" for positive polarity containing tag POS; "Neg" for negative polarity containing tag NEG.
      */
     private getPolarity(): string{
+        if (this.root.getName() == "değil"){
+            return "Neg";
+        }
         if (this.containsTag(MorphologicalTag.POSITIVE)){
             return "Pos";
         }
@@ -814,14 +817,14 @@ export class MorphologicalParse {
      * past tenses.
      */
     private getTense(): string{
-        if (this.containsTag(MorphologicalTag.PASTTENSE)){
+        if (this.containsTag(MorphologicalTag.NARRATIVE) && this.containsTag(MorphologicalTag.PASTTENSE)){
+            return "Pqp";
+        }
+        if (this.containsTag(MorphologicalTag.NARRATIVE) || this.containsTag(MorphologicalTag.PASTTENSE)){
             return "Past";
         }
         if (this.containsTag(MorphologicalTag.FUTURE)){
             return "Fut";
-        }
-        if (this.containsTag(MorphologicalTag.NARRATIVE) && this.containsTag(MorphologicalTag.PASTTENSE)){
-            return "Pqp";
         }
         if (!this.containsTag(MorphologicalTag.PASTTENSE) && !this.containsTag(MorphologicalTag.FUTURE)){
             return "Pres";
@@ -935,6 +938,19 @@ export class MorphologicalParse {
         return undefined;
     }
 
+    private getEvident(): string{
+        if (this.containsTag(MorphologicalTag.NARRATIVE)){
+            return "Nfh";
+        } else {
+            if (this.containsTag(MorphologicalTag.COPULA) || this.containsTag(MorphologicalTag.ABLE) || this.containsTag(MorphologicalTag.AORIST) || this.containsTag(MorphologicalTag.PROGRESSIVE2)
+                || this.containsTag(MorphologicalTag.DESIRE) || this.containsTag(MorphologicalTag.NECESSITY) || this.containsTag(MorphologicalTag.CONDITIONAL) || this.containsTag(MorphologicalTag.IMPERATIVE) || this.containsTag(MorphologicalTag.OPTATIVE)
+                || this.containsTag(MorphologicalTag.PASTTENSE) || this.containsTag(MorphologicalTag.NARRATIVE) || this.containsTag(MorphologicalTag.PROGRESSIVE1) || this.containsTag(MorphologicalTag.FUTURE)) {
+                return "Fh";
+            }
+        }
+        return undefined;
+    }
+
     /**
      * Construct the universal dependency features as an array of strings. Each element represents a single feature.
      * Every feature is given as featureType = featureValue.
@@ -959,7 +975,7 @@ export class MorphologicalParse {
         if (degree != undefined && uPos.toUpperCase() != "ADJ"){
             featureList.push("Degree=" + degree);
         }
-        if (this.isNoun() || this.isVerb()){
+        if (this.isNoun() || this.isVerb() || this.root.getName() == "mi" || (pronType != undefined && pronType != "Art")){
             let number = this.getNumber();
             if (number != undefined){
                 featureList.push("Number=" + number);
@@ -977,7 +993,7 @@ export class MorphologicalParse {
                 featureList.push("Person[psor]=" + possessivePerson);
             }
         }
-        if (this.isNoun()) {
+        if (this.isNoun() || (pronType != undefined && pronType != "Art")) {
             let case_ = this.getCase();
             if (case_ != undefined){
                 featureList.push("Case=" + case_);
@@ -989,17 +1005,17 @@ export class MorphologicalParse {
                 featureList.push("Definite=" + definite);
             }
         }
-        if (this.isVerb()){
+        if (this.isVerb() || this.root.getName() == "mi"){
             let polarity = this.getPolarity();
             if (polarity != undefined){
                 featureList.push("Polarity=" + polarity);
             }
             let voice = this.getVoice();
-            if (voice != undefined){
+            if (voice != undefined && this.root.getName() != "mi"){
                 featureList.push("Voice=" + voice);
             }
             let aspect = this.getAspect();
-            if (aspect != undefined && uPos.toUpperCase() != "PROPN"){
+            if (aspect != undefined && uPos.toUpperCase() != "PROPN" && this.root.getName() != "mi"){
                 featureList.push("Aspect=" + aspect);
             }
             let tense = this.getTense();
@@ -1007,12 +1023,16 @@ export class MorphologicalParse {
                 featureList.push("Tense=" + tense);
             }
             let mood = this.getMood();
-            if (mood != undefined && uPos.toUpperCase() != "PROPN"){
+            if (mood != undefined && uPos.toUpperCase() != "PROPN" && this.root.getName() != "mi"){
                 featureList.push("Mood=" + mood);
             }
             let verbForm = this.getVerbForm();
             if (verbForm != undefined && uPos.toUpperCase() != "PROPN"){
                 featureList.push("VerbForm=" + verbForm);
+            }
+            let evident = this.getEvident();
+            if (evident != undefined && this.root.getName() != "mi"){
+                featureList.push("Evident=" + evident);
             }
         }
         featureList.sort();

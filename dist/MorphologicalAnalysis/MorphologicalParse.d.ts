@@ -374,6 +374,7 @@ export declare class MorphologicalParse {
      * WITHOUTHAVINGDONESO, WITHOUTBEINGABLETOHAVEDONESO, BYDOINGSO, AFTERDOINGSO, INFINITIVE3; "Fin" for others.
      */
     private getVerbForm;
+    private getEvident;
     /**
      * Construct the universal dependency features as an array of strings. Each element represents a single feature.
      * Every feature is given as featureType = featureValue.
