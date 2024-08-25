@@ -37,6 +37,7 @@ describe('FsmMorphologicalAnalyzerTest', function() {
         });
 
         it('morphologicalAnalysisSpecialProperNoun', function() {
+            assert.ok(fsm.morphologicalAnalysis("Won'u").size() != 0);
             assert.ok(fsm.morphologicalAnalysis("Slack'in").size() != 0);
             assert.ok(fsm.morphologicalAnalysis("SPK'ya").size() != 0);
             assert.ok(fsm.morphologicalAnalysis("Stephen'ın").size() != 0);

@@ -1352,7 +1352,7 @@ export class FsmMorphologicalAnalyzer {
                                                 this.dictionaryTrie.addWord(possibleRoot, new TxtWord(possibleRoot, "IS_REELSAYI"));
                                                 fsmParse = this.analysis(lowerCased, this.isProperNoun(surfaceForm));
                                             } else {
-                                                if (Word.isCapital(possibleRoot)) {
+                                                if (Word.isCapital(possibleRoot) || "QXW".includes(possibleRoot.substring(0, 1))) {
                                                     let newWord = undefined
                                                     possibleRootLowerCased = possibleRoot.toLocaleLowerCase("tr");
                                                     if (this.pronunciations.has(possibleRootLowerCased)){
