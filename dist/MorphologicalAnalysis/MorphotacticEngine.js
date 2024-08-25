@@ -196,7 +196,7 @@
                 (TurkishLanguage_1.TurkishLanguage.isBackRoundedVowel(Word_1.Word.lastVowel(formationToCheck)) && root.notObeysVowelHarmonyDuringAgglutination())) {
                 return formation + 'ü';
             }
-            if ((TurkishLanguage_1.TurkishLanguage.isFrontUnroundedVowel(Word_1.Word.lastVowel(formationToCheck)) && !root.notObeysVowelHarmonyDuringAgglutination()) ||
+            if ((TurkishLanguage_1.TurkishLanguage.isFrontUnroundedVowel(Word_1.Word.lastVowel(formationToCheck)) && (!root.notObeysVowelHarmonyDuringAgglutination() || !rootWord)) ||
                 ((Word_1.Word.lastVowel(formationToCheck) == 'a' || Word_1.Word.lastVowel(formationToCheck) == 'â') && root.notObeysVowelHarmonyDuringAgglutination())) {
                 return formation + 'i';
             }

@@ -448,6 +448,7 @@
                             else {
                                 formation = MorphotacticEngine_1.MorphotacticEngine.resolveH(root, formation, i == 1, false, rootWord, formationToCheck);
                             }
+                            rootWord = false;
                             break;
                         case 'C':
                             formation = MorphotacticEngine_1.MorphotacticEngine.resolveC(formation, formationToCheck);

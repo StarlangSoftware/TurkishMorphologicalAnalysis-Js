@@ -46,10 +46,10 @@ describe('FsmMorphologicalAnalyzerTest', function() {
         });
 
         it('morphologicalAnalysisNewWords', function() {
-            assert.ok(fsm.robustMorphologicalAnalysis("googlecılardan").size() != 0);
-            assert.ok(fsm.robustMorphologicalAnalysis("zaptıraplaştırılmayana").size() != 0);
-            assert.ok(fsm.robustMorphologicalAnalysis("abzürtleşenmiş").size() != 0);
-            assert.ok(fsm.robustMorphologicalAnalysis("vışlığından").size() != 0);
+            assert.ok(fsm.robustMorphologicalAnalysis("googlecılardan").size() == 6);
+            assert.ok(fsm.robustMorphologicalAnalysis("zaptıraplaştırılmayana").size() == 8);
+            assert.ok(fsm.robustMorphologicalAnalysis("abzürtleşenmiş").size() == 5);
+            assert.ok(fsm.robustMorphologicalAnalysis("vışlığından").size() == 8);
         });
 
         it('morphologicalAnalysisDataTimeNumber', function() {

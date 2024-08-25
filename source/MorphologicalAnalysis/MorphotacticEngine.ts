@@ -185,7 +185,7 @@ export class MorphotacticEngine {
             (TurkishLanguage.isBackRoundedVowel(Word.lastVowel(formationToCheck)) && root.notObeysVowelHarmonyDuringAgglutination())) {
             return formation + 'ü';
         }
-        if ((TurkishLanguage.isFrontUnroundedVowel(Word.lastVowel(formationToCheck)) && !root.notObeysVowelHarmonyDuringAgglutination()) ||
+        if ((TurkishLanguage.isFrontUnroundedVowel(Word.lastVowel(formationToCheck)) && (!root.notObeysVowelHarmonyDuringAgglutination() || !rootWord)) ||
             ((Word.lastVowel(formationToCheck) == 'a' || Word.lastVowel(formationToCheck) == 'â') && root.notObeysVowelHarmonyDuringAgglutination())) {
             return formation + 'i';
         }

@@ -433,6 +433,7 @@ export class Transition {
                         } else {
                             formation = MorphotacticEngine.resolveH(root, formation, i == 1, false, rootWord, formationToCheck);
                         }
+                        rootWord = false
                         break;
                     case 'C':
                         formation = MorphotacticEngine.resolveC(formation, formationToCheck);

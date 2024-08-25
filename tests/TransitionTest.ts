@@ -56,6 +56,7 @@ describe('TransitionTest', function() {
             assert.ok(fsm.morphologicalAnalysis("halika").size() != 0);
             assert.ok(fsm.morphologicalAnalysis("kediye").size() != 0);
             assert.ok(fsm.morphologicalAnalysis("eve").size() != 0);
+            assert.ok(fsm.morphologicalAnalysis("saatinizi").size() != 0);
         });
         it('testC', function() {
             assert.ok(fsm.morphologicalAnalysis("gripçi").size() != 0);

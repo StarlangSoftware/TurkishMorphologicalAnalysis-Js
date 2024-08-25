@@ -1060,29 +1060,24 @@
          */
         rootOfPossiblyNewWord(surfaceForm) {
             let words = this.suffixTrie.getWordsWithPrefix(this.reverseString(surfaceForm));
-            let maxLength = 0;
-            let longestWord = null;
+            let candidateWord = null;
+            let candidateList = new Array();
             for (let word of words) {
-                if (word.getName().length > maxLength) {
-                    longestWord = surfaceForm.substring(0, surfaceForm.length - word.getName().length);
-                    maxLength = word.getName().length;
-                }
-            }
-            if (maxLength != 0) {
+                candidateWord = surfaceForm.substring(0, surfaceForm.length - word.getName().length);
                 let newWord;
-                if (longestWord.endsWith("ğ")) {
-                    longestWord = longestWord.substring(0, longestWord.length - 1) + "k";
-                    newWord = new TxtWord_1.TxtWord(longestWord, "CL_ISIM");
+                if (candidateWord.endsWith("ğ")) {
+                    candidateWord = candidateWord.substring(0, candidateWord.length - 1) + "k";
+                    newWord = new TxtWord_1.TxtWord(candidateWord, "CL_ISIM");
                     newWord.addFlag("IS_SD");
                 }
                 else {
-                    newWord = new TxtWord_1.TxtWord(longestWord, "CL_ISIM");
+                    newWord = new TxtWord_1.TxtWord(candidateWord, "CL_ISIM");
                     newWord.addFlag("CL_FIIL");
                 }
-                this.dictionaryTrie.addWord(longestWord, newWord);
-                return newWord;
+                candidateList.push(newWord);
+                this.dictionaryTrie.addWord(candidateWord, newWord);
             }
-            return null;
+            return candidateList;
         }
         /**
          * The robustMorphologicalAnalysis is used to analyse surfaceForm String. First it gets the currentParse of the surfaceForm
@@ -1103,21 +1098,17 @@
                 if (this.isProperNoun(surfaceForm)) {
                     fsmParse.push(new FsmParse_1.FsmParse(surfaceForm, this.finiteStateMachine.getState("ProperRoot")));
                 }
-                else {
-                    if (this.isCode(surfaceForm)) {
-                        fsmParse.push(new FsmParse_1.FsmParse(surfaceForm, this.finiteStateMachine.getState("CodeRoot")));
-                    }
-                    else {
-                        let newRoot = this.rootOfPossiblyNewWord(surfaceForm);
-                        if (newRoot != null) {
-                            fsmParse.push(new FsmParse_1.FsmParse(newRoot, this.finiteStateMachine.getState("VerbalRoot")));
-                            fsmParse.push(new FsmParse_1.FsmParse(newRoot, this.finiteStateMachine.getState("NominalRoot")));
-                        }
-                        else {
-                            fsmParse.push(new FsmParse_1.FsmParse(surfaceForm, this.finiteStateMachine.getState("NominalRoot")));
-                        }
+                if (this.isCode(surfaceForm)) {
+                    fsmParse.push(new FsmParse_1.FsmParse(surfaceForm, this.finiteStateMachine.getState("CodeRoot")));
+                }
+                let newCandidateList = this.rootOfPossiblyNewWord(surfaceForm);
+                if (newCandidateList.length != 0) {
+                    for (let word of newCandidateList) {
+                        fsmParse.push(new FsmParse_1.FsmParse(word, this.finiteStateMachine.getState("VerbalRoot")));
+                        fsmParse.push(new FsmParse_1.FsmParse(word, this.finiteStateMachine.getState("NominalRoot")));
                     }
                 }
+                fsmParse.push(new FsmParse_1.FsmParse(surfaceForm, this.finiteStateMachine.getState("NominalRoot")));
                 return new FsmParseList_1.FsmParseList(this.parseWordSurfaceForm(fsmParse, surfaceForm));
             }
             else {
