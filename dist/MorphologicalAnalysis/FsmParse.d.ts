@@ -293,4 +293,13 @@ export declare class FsmParse extends MorphologicalParse {
      * @return returns transitionList method.
      */
     toString(): string;
+    /**
+     * In order to morphologically parse special proper nouns in Turkish, whose affixes obeys not the original but their
+     * pronunciations, the morphologicalAnalysis method replaces the original word with its pronunciation and do the
+     * rest. This method reverts it back, that is it restores its original form by replacing the pronunciations in the
+     * parses with the original form.
+     * @param original Original form of the proper noun.
+     * @param pronunciation Pronunciation of the proper noun.
+     */
+    restoreOriginalForm(original: string, pronunciation: string): void;
 }

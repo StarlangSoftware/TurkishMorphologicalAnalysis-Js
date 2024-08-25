@@ -15,12 +15,14 @@ import {Sentence} from "nlptoolkit-corpus/dist/Sentence";
 import {Word} from "nlptoolkit-dictionary/dist/Dictionary/Word";
 import {State} from "./State";
 import {Queue} from "nlptoolkit-datastructure/dist/Queue";
+import {FileUtils} from "nlptoolkit-util/dist/FileUtils";
 
 export class FsmMorphologicalAnalyzer {
 
     private dictionaryTrie: Trie
     private suffixTrie: Trie
     private parsedSurfaceForms: Map<string, string> = undefined
+    private pronunciations: Map<string, string> = undefined
     private readonly finiteStateMachine: FiniteStateMachine
     private static MAX_DISTANCE = 2
     private readonly dictionary: TxtDictionary
@@ -57,6 +59,7 @@ export class FsmMorphologicalAnalyzer {
         if (cacheSize > 0){
             this.cache = new LRUCache<string, FsmParseList>(cacheSize);
         }
+        this.addPronunciations("pronunciations.txt");
     }
 
     /**
@@ -93,13 +96,15 @@ export class FsmMorphologicalAnalyzer {
      * @param fileName Input file containing analyzable surface forms and their root forms.
      */
     addParsedSurfaceForms(fileName: string){
-        this.parsedSurfaceForms = new Map<string, string>()
-        let data = fs.readFileSync(fileName, 'utf8')
-        let lines = data.split("\n")
-        for (let line of lines) {
-            let items = line.split(" ");
-            this.parsedSurfaceForms.set(items[0], items[1])
-        }
+        this.parsedSurfaceForms = FileUtils.readHashMap(fileName)
+    }
+
+    /**
+     * Reads the file for foreign words and their pronunciations.
+     * @param fileName Input file containing foreign words and their pronunciations.
+     */
+    addPronunciations(fileName: string){
+        this.pronunciations = FileUtils.readHashMap(fileName)
     }
 
     /**
@@ -1287,7 +1292,9 @@ export class FsmMorphologicalAnalyzer {
      * @return fsmParseList which holds the analysis.
      */
     morphologicalAnalysis(surfaceForm: string): FsmParseList{
-        let lowerCased = surfaceForm.toLocaleLowerCase("tr");
+        let lowerCased = surfaceForm.toLocaleLowerCase("tr")
+        let possibleRootLowerCased = "", pronunciation = ""
+        let isRootReplaced = false
         if (this.parsedSurfaceForms != undefined && this.parsedSurfaceForms.has(lowerCased) && 
             !this.isInteger(surfaceForm) && !this.isDouble(surfaceForm) && !this.isPercent(surfaceForm) && 
             !this.isTime(surfaceForm) && !this.isRange(surfaceForm) && !this.isDate(surfaceForm)){
@@ -1299,9 +1306,9 @@ export class FsmMorphologicalAnalyzer {
             return this.cache.get(surfaceForm);
         }
         if (this.patternMatches("^(\\w|Ç|Ş|İ|Ü|Ö)\\.$",surfaceForm)) {
-            this.dictionaryTrie.addWord(surfaceForm.toLocaleLowerCase("tr"), new TxtWord(surfaceForm.toLocaleLowerCase("tr"), "IS_OA"));
+            this.dictionaryTrie.addWord(lowerCased, new TxtWord(lowerCased, "IS_OA"));
         }
-        let defaultFsmParse = this.analysis(surfaceForm.toLocaleLowerCase("tr"), this.isProperNoun(surfaceForm));
+        let defaultFsmParse = this.analysis(lowerCased, this.isProperNoun(surfaceForm));
         if (defaultFsmParse.length > 0) {
             let fsmParseList = new FsmParseList(defaultFsmParse);
             if (this.cache != undefined) {
@@ -1315,48 +1322,58 @@ export class FsmMorphologicalAnalyzer {
             if (possibleRoot != "") {
                 if (possibleRoot.includes("/") || possibleRoot.includes("\\/")) {
                     this.dictionaryTrie.addWord(possibleRoot, new TxtWord(possibleRoot, "IS_KESIR"));
-                    fsmParse = this.analysis(surfaceForm.toLocaleLowerCase("tr"), this.isProperNoun(surfaceForm));
+                    fsmParse = this.analysis(lowerCased, this.isProperNoun(surfaceForm));
                 } else {
                     if (this.isDate(possibleRoot)) {
                         this.dictionaryTrie.addWord(possibleRoot, new TxtWord(possibleRoot, "IS_DATE"));
-                        fsmParse = this.analysis(surfaceForm.toLocaleLowerCase("tr"), this.isProperNoun(surfaceForm));
+                        fsmParse = this.analysis(lowerCased, this.isProperNoun(surfaceForm));
                     } else {
                         if (this.patternMatches("^\\d+/\\d+$", possibleRoot)) {
                             this.dictionaryTrie.addWord(possibleRoot, new TxtWord(possibleRoot, "IS_KESIR"));
-                            fsmParse = this.analysis(surfaceForm.toLocaleLowerCase("tr"), this.isProperNoun(surfaceForm));
+                            fsmParse = this.analysis(lowerCased, this.isProperNoun(surfaceForm));
                         } else {
                             if (this.isPercent(possibleRoot)) {
                                 this.dictionaryTrie.addWord(possibleRoot, new TxtWord(possibleRoot, "IS_PERCENT"));
-                                fsmParse = this.analysis(surfaceForm.toLocaleLowerCase("tr"), this.isProperNoun(surfaceForm));
+                                fsmParse = this.analysis(lowerCased, this.isProperNoun(surfaceForm));
                             } else {
                                 if (this.isTime(surfaceForm)) {
                                     this.dictionaryTrie.addWord(possibleRoot, new TxtWord(possibleRoot, "IS_ZAMAN"));
-                                    fsmParse = this.analysis(surfaceForm.toLocaleLowerCase("tr"), this.isProperNoun(surfaceForm));
+                                    fsmParse = this.analysis(lowerCased, this.isProperNoun(surfaceForm));
                                 } else {
                                     if (this.isRange(surfaceForm)) {
                                         this.dictionaryTrie.addWord(possibleRoot, new TxtWord(possibleRoot, "IS_RANGE"));
-                                        fsmParse = this.analysis(surfaceForm.toLocaleLowerCase("tr"), this.isProperNoun(surfaceForm));
+                                        fsmParse = this.analysis(lowerCased, this.isProperNoun(surfaceForm));
                                     } else {
                                         if (this.isInteger(possibleRoot)) {
                                             this.dictionaryTrie.addWord(possibleRoot, new TxtWord(possibleRoot, "IS_SAYI"));
-                                            fsmParse = this.analysis(surfaceForm.toLocaleLowerCase("tr"), this.isProperNoun(surfaceForm));
+                                            fsmParse = this.analysis(lowerCased, this.isProperNoun(surfaceForm));
                                         } else {
                                             if (this.isDouble(possibleRoot)) {
                                                 this.dictionaryTrie.addWord(possibleRoot, new TxtWord(possibleRoot, "IS_REELSAYI"));
-                                                fsmParse = this.analysis(surfaceForm.toLocaleLowerCase("tr"), this.isProperNoun(surfaceForm));
+                                                fsmParse = this.analysis(lowerCased, this.isProperNoun(surfaceForm));
                                             } else {
                                                 if (Word.isCapital(possibleRoot)) {
-                                                    let newWord = undefined;
-                                                    if (this.dictionary.getWord(possibleRoot.toLocaleLowerCase("tr")) != null) {
-                                                        (<TxtWord> this.dictionary.getWord(possibleRoot.toLocaleLowerCase("tr"))).addFlag("IS_OA");
+                                                    let newWord = undefined
+                                                    possibleRootLowerCased = possibleRoot.toLocaleLowerCase("tr");
+                                                    if (this.pronunciations.has(possibleRootLowerCased)){
+                                                        isRootReplaced = true
+                                                        pronunciation = this.pronunciations.get(possibleRootLowerCased)
+                                                        if (this.dictionary.getWord(pronunciation) != null) {
+                                                            (<TxtWord> this.dictionary.getWord(pronunciation)).addFlag("IS_OA");
+                                                        } else {
+                                                            newWord = new TxtWord(pronunciation, "IS_OA");
+                                                            this.dictionaryTrie.addWord(pronunciation, newWord);
+                                                        }
+                                                        let replacedWord = pronunciation + lowerCased.substring(possibleRootLowerCased.length);
+                                                        fsmParse = this.analysis(replacedWord, this.isProperNoun(surfaceForm));
                                                     } else {
-                                                        newWord = new TxtWord(possibleRoot.toLocaleLowerCase("tr"), "IS_OA");
-                                                        this.dictionaryTrie.addWord(possibleRoot.toLocaleLowerCase("tr"), newWord);
-                                                    }
-                                                    fsmParse = this.analysis(surfaceForm.toLocaleLowerCase("tr"), this.isProperNoun(surfaceForm));
-                                                    if (fsmParse.length == 0 && newWord != undefined) {
-                                                        newWord.addFlag("IS_KIS");
-                                                        fsmParse = this.analysis(surfaceForm.toLocaleLowerCase("tr"), this.isProperNoun(surfaceForm));
+                                                        if (this.dictionary.getWord(possibleRootLowerCased) != null) {
+                                                            (<TxtWord> this.dictionary.getWord(possibleRootLowerCased)).addFlag("IS_OA");
+                                                        } else {
+                                                            newWord = new TxtWord(possibleRootLowerCased, "IS_OA");
+                                                            this.dictionaryTrie.addWord(possibleRootLowerCased, newWord);
+                                                        }
+                                                        fsmParse = this.analysis(lowerCased, this.isProperNoun(surfaceForm));
                                                     }
                                                 }
                                             }
@@ -1367,6 +1384,11 @@ export class FsmMorphologicalAnalyzer {
                         }
                     }
                 }
+            }
+        }
+        if (!isRootReplaced){
+            for (let parse of fsmParse){
+                parse.restoreOriginalForm(possibleRootLowerCased, pronunciation)
             }
         }
         let fsmParseList = new FsmParseList(fsmParse);

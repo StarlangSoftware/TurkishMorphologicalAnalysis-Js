@@ -10,6 +10,7 @@ export declare class FsmMorphologicalAnalyzer {
     private dictionaryTrie;
     private suffixTrie;
     private parsedSurfaceForms;
+    private pronunciations;
     private readonly finiteStateMachine;
     private static MAX_DISTANCE;
     private readonly dictionary;
@@ -42,6 +43,11 @@ export declare class FsmMorphologicalAnalyzer {
      * @param fileName Input file containing analyzable surface forms and their root forms.
      */
     addParsedSurfaceForms(fileName: string): void;
+    /**
+     * Reads the file for foreign words and their pronunciations.
+     * @param fileName Input file containing foreign words and their pronunciations.
+     */
+    addPronunciations(fileName: string): void;
     /**
      * The getPossibleWords method takes {@link MorphologicalParse} and {@link MetamorphicParse} as input.
      * First it determines whether the given morphologicalParse is the root verb and whether it contains a verb tag.

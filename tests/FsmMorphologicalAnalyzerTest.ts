@@ -37,12 +37,9 @@ describe('FsmMorphologicalAnalyzerTest', function() {
         });
 
         it('morphologicalAnalysisSpecialProperNoun', function() {
-            assert.ok(fsm.morphologicalAnalysis("Times'ın").size() != 0);
-            assert.ok(fsm.morphologicalAnalysis("Times'tır").size() != 0);
-            assert.ok(fsm.morphologicalAnalysis("Times'mış").size() != 0);
-            assert.ok(fsm.morphologicalAnalysis("Twitter'ın").size() != 0);
-            assert.ok(fsm.morphologicalAnalysis("Twitter'dır").size() != 0);
-            assert.ok(fsm.morphologicalAnalysis("Twitter'mış").size() != 0);
+            assert.ok(fsm.morphologicalAnalysis("Slack'in").size() != 0);
+            assert.ok(fsm.morphologicalAnalysis("SPK'ya").size() != 0);
+            assert.ok(fsm.morphologicalAnalysis("Stephen'ın").size() != 0);
         });
 
         it('morphologicalAnalysisNewWords', function() {
