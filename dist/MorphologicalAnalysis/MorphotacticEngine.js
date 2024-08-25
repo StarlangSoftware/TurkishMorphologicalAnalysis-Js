@@ -229,6 +229,9 @@
                     }
                 }
             }
+            if (Word_1.Word.lastVowel(formationToCheck) == '0') {
+                return formation + 'i';
+            }
             return formation;
         }
         /**

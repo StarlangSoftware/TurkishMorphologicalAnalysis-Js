@@ -295,8 +295,9 @@
                     else {
                         //---showsSuRegularities---
                         //karasu->karasuyu, su->suyu, ağırsu->ağırsuyu, akarsu->akarsuyu, bengisu->bengisuyu
-                        if (rootWord && root.showsSuRegularities() && this.startWithVowelorConsonantDrops() && !this._with.startsWith("y")) {
+                        if (rootWord && root.showsSuRegularities() && this.startWithVowelorConsonantDrops()) {
                             formation = stem + 'y';
+                            i = 1;
                             formationToCheck = formation;
                         }
                         else {

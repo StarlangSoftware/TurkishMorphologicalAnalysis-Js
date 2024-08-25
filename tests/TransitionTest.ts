@@ -119,6 +119,13 @@ describe('TransitionTest', function() {
         it('testShowsSuRegularities', function() {
             assert.ok(fsm.morphologicalAnalysis("karasuyu").size() != 0);
             assert.ok(fsm.morphologicalAnalysis("suyu").size() != 0);
+            assert.ok(fsm.morphologicalAnalysis("suymuş").size() != 0);
+            assert.ok(fsm.morphologicalAnalysis("suyuymuş").size() != 0);
+            assert.ok(fsm.morphologicalAnalysis("suyla").size() != 0);
+            assert.ok(fsm.morphologicalAnalysis("suyuyla").size() != 0);
+            assert.ok(fsm.morphologicalAnalysis("suydu").size() != 0);
+            assert.ok(fsm.morphologicalAnalysis("suyuydu").size() != 0);
+            assert.ok(fsm.morphologicalAnalysis("suyuna").size() != 0);
         });
         it('testDuplicatesDuringSuffixation', function() {
             assert.ok(fsm.morphologicalAnalysis("tıbbı").size() != 0);
