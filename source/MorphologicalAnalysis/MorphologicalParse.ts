@@ -618,6 +618,14 @@ export class MorphologicalParse {
      * of the parse is plural (contains A1PL, A2PL, A3PL).
      */
     private getNumber(): string{
+        if (this.lastIGContainsTag(MorphologicalTag.A1SG) || this.lastIGContainsTag(MorphologicalTag.A2SG) ||
+            this.lastIGContainsTag(MorphologicalTag.A3SG)){
+            return "Sing";
+        }
+        if (this.lastIGContainsTag(MorphologicalTag.A1PL) || this.lastIGContainsTag(MorphologicalTag.A2PL) ||
+            this.lastIGContainsTag(MorphologicalTag.A3PL)){
+            return "Plur";
+        }
         if (this.containsTag(MorphologicalTag.A1SG) || this.containsTag(MorphologicalTag.A2SG) ||
             this.containsTag(MorphologicalTag.A3SG)){
             return "Sing";
@@ -635,6 +643,14 @@ export class MorphologicalParse {
      * possessive agreement of the parse is plural (contains P1PL, P2PL, P3PL).
      */
     private getPossessiveNumber(): string{
+        if (this.lastIGContainsTag(MorphologicalTag.P1SG) || this.lastIGContainsTag(MorphologicalTag.P2SG) ||
+            this.lastIGContainsTag(MorphologicalTag.P3SG)){
+            return "Sing";
+        }
+        if (this.lastIGContainsTag(MorphologicalTag.P1PL) || this.lastIGContainsTag(MorphologicalTag.P2PL) ||
+            this.lastIGContainsTag(MorphologicalTag.P3PL)){
+            return "Plur";
+        }
         if (this.containsTag(MorphologicalTag.P1SG) || this.containsTag(MorphologicalTag.P2SG) ||
             this.containsTag(MorphologicalTag.P3SG)){
             return "Sing";
@@ -731,6 +747,15 @@ export class MorphologicalParse {
      * @return "1" for first person; "2" for second person; "3" for third person.
      */
     private getPerson(): string{
+        if (this.lastIGContainsTag(MorphologicalTag.A1SG) || this.lastIGContainsTag(MorphologicalTag.A1PL)){
+            return "1";
+        }
+        if (this.lastIGContainsTag(MorphologicalTag.A2SG) || this.lastIGContainsTag(MorphologicalTag.A2PL)){
+            return "2";
+        }
+        if (this.lastIGContainsTag(MorphologicalTag.A3SG) || this.lastIGContainsTag(MorphologicalTag.A3PL)){
+            return "3";
+        }
         if (this.containsTag(MorphologicalTag.A1SG) || this.containsTag(MorphologicalTag.A1PL)){
             return "1";
         }
@@ -748,6 +773,15 @@ export class MorphologicalParse {
      * @return "1" for first person; "2" for second person; "3" for third person.
      */
     private getPossessivePerson(): string{
+        if (this.lastIGContainsTag(MorphologicalTag.P1SG) || this.lastIGContainsTag(MorphologicalTag.P1PL)){
+            return "1";
+        }
+        if (this.lastIGContainsTag(MorphologicalTag.P2SG) || this.lastIGContainsTag(MorphologicalTag.P2PL)){
+            return "2";
+        }
+        if (this.lastIGContainsTag(MorphologicalTag.P3SG) || this.lastIGContainsTag(MorphologicalTag.P3PL)){
+            return "3";
+        }
         if (this.containsTag(MorphologicalTag.P1SG) || this.containsTag(MorphologicalTag.P1PL)){
             return "1";
         }

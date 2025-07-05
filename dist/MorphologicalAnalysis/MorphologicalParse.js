@@ -603,6 +603,14 @@
          * of the parse is plural (contains A1PL, A2PL, A3PL).
          */
         getNumber() {
+            if (this.lastIGContainsTag(MorphologicalTag_1.MorphologicalTag.A1SG) || this.lastIGContainsTag(MorphologicalTag_1.MorphologicalTag.A2SG) ||
+                this.lastIGContainsTag(MorphologicalTag_1.MorphologicalTag.A3SG)) {
+                return "Sing";
+            }
+            if (this.lastIGContainsTag(MorphologicalTag_1.MorphologicalTag.A1PL) || this.lastIGContainsTag(MorphologicalTag_1.MorphologicalTag.A2PL) ||
+                this.lastIGContainsTag(MorphologicalTag_1.MorphologicalTag.A3PL)) {
+                return "Plur";
+            }
             if (this.containsTag(MorphologicalTag_1.MorphologicalTag.A1SG) || this.containsTag(MorphologicalTag_1.MorphologicalTag.A2SG) ||
                 this.containsTag(MorphologicalTag_1.MorphologicalTag.A3SG)) {
                 return "Sing";
@@ -619,6 +627,14 @@
          * possessive agreement of the parse is plural (contains P1PL, P2PL, P3PL).
          */
         getPossessiveNumber() {
+            if (this.lastIGContainsTag(MorphologicalTag_1.MorphologicalTag.P1SG) || this.lastIGContainsTag(MorphologicalTag_1.MorphologicalTag.P2SG) ||
+                this.lastIGContainsTag(MorphologicalTag_1.MorphologicalTag.P3SG)) {
+                return "Sing";
+            }
+            if (this.lastIGContainsTag(MorphologicalTag_1.MorphologicalTag.P1PL) || this.lastIGContainsTag(MorphologicalTag_1.MorphologicalTag.P2PL) ||
+                this.lastIGContainsTag(MorphologicalTag_1.MorphologicalTag.P3PL)) {
+                return "Plur";
+            }
             if (this.containsTag(MorphologicalTag_1.MorphologicalTag.P1SG) || this.containsTag(MorphologicalTag_1.MorphologicalTag.P2SG) ||
                 this.containsTag(MorphologicalTag_1.MorphologicalTag.P3SG)) {
                 return "Sing";
@@ -710,6 +726,15 @@
          * @return "1" for first person; "2" for second person; "3" for third person.
          */
         getPerson() {
+            if (this.lastIGContainsTag(MorphologicalTag_1.MorphologicalTag.A1SG) || this.lastIGContainsTag(MorphologicalTag_1.MorphologicalTag.A1PL)) {
+                return "1";
+            }
+            if (this.lastIGContainsTag(MorphologicalTag_1.MorphologicalTag.A2SG) || this.lastIGContainsTag(MorphologicalTag_1.MorphologicalTag.A2PL)) {
+                return "2";
+            }
+            if (this.lastIGContainsTag(MorphologicalTag_1.MorphologicalTag.A3SG) || this.lastIGContainsTag(MorphologicalTag_1.MorphologicalTag.A3PL)) {
+                return "3";
+            }
             if (this.containsTag(MorphologicalTag_1.MorphologicalTag.A1SG) || this.containsTag(MorphologicalTag_1.MorphologicalTag.A1PL)) {
                 return "1";
             }
@@ -726,6 +751,15 @@
          * @return "1" for first person; "2" for second person; "3" for third person.
          */
         getPossessivePerson() {
+            if (this.lastIGContainsTag(MorphologicalTag_1.MorphologicalTag.P1SG) || this.lastIGContainsTag(MorphologicalTag_1.MorphologicalTag.P1PL)) {
+                return "1";
+            }
+            if (this.lastIGContainsTag(MorphologicalTag_1.MorphologicalTag.P2SG) || this.lastIGContainsTag(MorphologicalTag_1.MorphologicalTag.P2PL)) {
+                return "2";
+            }
+            if (this.lastIGContainsTag(MorphologicalTag_1.MorphologicalTag.P3SG) || this.lastIGContainsTag(MorphologicalTag_1.MorphologicalTag.P3PL)) {
+                return "3";
+            }
             if (this.containsTag(MorphologicalTag_1.MorphologicalTag.P1SG) || this.containsTag(MorphologicalTag_1.MorphologicalTag.P1PL)) {
                 return "1";
             }
