@@ -528,6 +528,14 @@
          * Metric : 6cmx7cmx8cm
          */
         MorphologicalTag[MorphologicalTag["METRIC"] = 128] = "METRIC";
+        /**
+         * Polite: yapınız, gidiniz
+         */
+        MorphologicalTag[MorphologicalTag["POLITE"] = 129] = "POLITE";
+        /**
+         * Urge: Baksana, yapsana
+         */
+        MorphologicalTag[MorphologicalTag["URGE"] = 130] = "URGE";
     })(MorphologicalTag = exports.MorphologicalTag || (exports.MorphologicalTag = {}));
 });
 //# sourceMappingURL=MorphologicalTag.js.map

@@ -514,5 +514,13 @@ export declare enum MorphologicalTag {
     /**
      * Metric : 6cmx7cmx8cm
      */
-    METRIC = 128
+    METRIC = 128,
+    /**
+     * Polite: yapınız, gidiniz
+     */
+    POLITE = 129,
+    /**
+     * Urge: Baksana, yapsana
+     */
+    URGE = 130
 }

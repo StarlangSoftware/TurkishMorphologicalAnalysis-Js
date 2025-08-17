@@ -41,7 +41,7 @@ describe('FiniteStateMachineTest', function() {
             for (let state of stateList){
                 transitionCount += fsm.getTransitions(state).length;
             }
-            assert.strictEqual(779, transitionCount);
+            assert.strictEqual(783, transitionCount);
         });
         it('testTransitionWith', function() {
             let transitionCounts = new CounterHashMap<string>();

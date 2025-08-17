@@ -702,7 +702,7 @@ export class FsmMorphologicalAnalyzer {
      */
     private parseWordLength(fsmParse: Array<FsmParse>, maxLength: number): Array<FsmParse>{
         let result = new Array<FsmParse>();
-        let resultSuffixList = new Array<string>();
+        let resultTransitionList = new Array<string>();
         let parseQueue = new Queue<FsmParse>(1000)
         parseQueue.enqueueAll(fsmParse)
         while (!parseQueue.isEmpty()) {
@@ -712,11 +712,11 @@ export class FsmMorphologicalAnalyzer {
             let currentState = currentFsmParse.getFinalSuffix();
             let currentSurfaceForm = currentFsmParse.getSurfaceForm();
             if (currentState.isEndState() && currentSurfaceForm.length <= maxLength) {
-                let currentSuffixList = currentFsmParse.getSuffixList()
-                if (!resultSuffixList.includes(currentSuffixList)) {
+                let currentTransitionList = currentSurfaceForm + " " + currentFsmParse.getFsmParseTransitionList()
+                if (!resultTransitionList.includes(currentTransitionList)) {
                     result.push(currentFsmParse);
                     currentFsmParse.constructInflectionalGroups();
-                    resultSuffixList.push(currentSuffixList);
+                    resultTransitionList.push(currentTransitionList);
                 }
             }
             this.addNewParsesFromCurrentParseLength(currentFsmParse, parseQueue, maxLength, root);
@@ -734,7 +734,7 @@ export class FsmMorphologicalAnalyzer {
      */
     private parseWordSurfaceForm(fsmParse: Array<FsmParse>, surfaceForm: string): Array<FsmParse>{
         let result = new Array<FsmParse>();
-        let resultSuffixList = new Array<string>();
+        let resultTransitionList = new Array<string>();
         let parseQueue = new Queue<FsmParse>(1000)
         parseQueue.enqueueAll(fsmParse)
         while (!parseQueue.isEmpty()) {
@@ -744,11 +744,11 @@ export class FsmMorphologicalAnalyzer {
             let currentState = currentFsmParse.getFinalSuffix();
             let currentSurfaceForm = currentFsmParse.getSurfaceForm();
             if (currentState.isEndState() && currentSurfaceForm == surfaceForm) {
-                let currentSuffixList = currentFsmParse.getSuffixList()
-                if (!resultSuffixList.includes(currentSuffixList)) {
+                let currentTransitionList = currentFsmParse.getFsmParseTransitionList()
+                if (!resultTransitionList.includes(currentTransitionList)) {
                     result.push(currentFsmParse);
                     currentFsmParse.constructInflectionalGroups();
-                    resultSuffixList.push(currentSuffixList);
+                    resultTransitionList.push(currentTransitionList);
                 }
             }
             this.addNewParsesFromCurrentParseSurfaceForm(currentFsmParse, parseQueue, surfaceForm, root);
