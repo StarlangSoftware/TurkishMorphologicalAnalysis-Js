@@ -210,17 +210,18 @@
          * yAbil, yAyaz, yAkal, yAkoy, yAmA, yHcH, HCH, Hr, Hs, Hn, yHn", yHnHz, Ar, Hl").
          *
          * @param root {@link TxtWord} input.
+         * @param startState {@link State} input.
          * @return true if there is softening during suffixation of the given root, false otherwise.
          */
-        softenDuringSuffixation(root) {
-            if ((root.isNominal() || root.isAdjective()) && root.nounSoftenDuringSuffixation() &&
+        softenDuringSuffixation(root, startState) {
+            if (!startState.getName().startsWith("VerbalRoot") && (root.isNominal() || root.isAdjective()) && root.nounSoftenDuringSuffixation() &&
                 (this._with == "Hm" || this._with == "nDAn" || this._with == "ncA" || this._with == "nDA" ||
                     this._with == "yA" || this._with == "yHm" || this._with == "yHz" || this._with == "yH" ||
                     this._with == "nH" || this._with == "nA" || this._with == "nHn" || this._with == "H" ||
                     this._with == "sH" || this._with == "Hn" || this._with == "HnHz" || this._with == "HmHz")) {
                 return true;
             }
-            if (root.isVerb() && root.verbSoftenDuringSuffixation() &&
+            if (startState.getName().startsWith("VerbalRoot") && root.isVerb() && root.verbSoftenDuringSuffixation() &&
                 (this._with.startsWith("Hyor") || this._with == "yHs" || this._with == "yAn" || this._with == "yA" ||
                     this._with.startsWith("yAcAk") || this._with == "yAsH" || this._with == "yHncA" || this._with == "yHp" ||
                     this._with == "yAlH" || this._with == "yArAk" || this._with == "yAdur" || this._with == "yHver" ||
@@ -304,7 +305,7 @@
                             if (rootWord && root.duplicatesDuringSuffixation() && !startState.getName().startsWith("VerbalRoot") &&
                                 TurkishLanguage_1.TurkishLanguage.isConsonantDrop(this._with.charAt(0))) {
                                 //---duplicatesDuringSuffixation---
-                                if (this.softenDuringSuffixation(root)) {
+                                if (this.softenDuringSuffixation(root, startState)) {
                                     //--extra softenDuringSuffixation
                                     switch (Word_1.Word.lastPhoneme(stem)) {
                                         case 'p':
@@ -329,7 +330,7 @@
                                     !startState.getName().startsWith("VerbalRoot") && !startState.getName().startsWith("ProperRoot") &&
                                     this.startWithVowelorConsonantDrops()) {
                                     //---lastIdropsDuringSuffixation---
-                                    if (this.softenDuringSuffixation(root)) {
+                                    if (this.softenDuringSuffixation(root, startState)) {
                                         //---softenDuringSuffixation---
                                         switch (Word_1.Word.lastPhoneme(stem)) {
                                             case 'p':
@@ -358,26 +359,26 @@
                                         //---nounSoftenDuringSuffixation or verbSoftenDuringSuffixation
                                         case 'p':
                                             //adap->adabı, amip->amibi, azap->azabı, gazap->gazabı
-                                            if (this.startWithVowelorConsonantDrops() && rootWord && this.softenDuringSuffixation(root)) {
+                                            if (this.startWithVowelorConsonantDrops() && rootWord && this.softenDuringSuffixation(root, startState)) {
                                                 formation = stem.substring(0, stem.length - 1) + 'b';
                                             }
                                             break;
                                         case 't':
                                             //adet->adedi, akort->akordu, armut->armudu
                                             //affet->affedi, yoket->yokedi, sabret->sabredi, rakset->raksedi
-                                            if (this.startWithVowelorConsonantDrops() && rootWord && this.softenDuringSuffixation(root)) {
+                                            if (this.startWithVowelorConsonantDrops() && rootWord && this.softenDuringSuffixation(root, startState)) {
                                                 formation = stem.substring(0, stem.length - 1) + 'd';
                                             }
                                             break;
                                         case 'ç':
                                             //ağaç->ağacı, almaç->almacı, akaç->akacı, avuç->avucu
-                                            if (this.startWithVowelorConsonantDrops() && rootWord && this.softenDuringSuffixation(root)) {
+                                            if (this.startWithVowelorConsonantDrops() && rootWord && this.softenDuringSuffixation(root, startState)) {
                                                 formation = stem.substring(0, stem.length - 1) + 'c';
                                             }
                                             break;
                                         case 'g':
                                             //arkeolog->arkeoloğu, filolog->filoloğu, minerolog->mineroloğu
-                                            if (this.startWithVowelorConsonantDrops() && rootWord && this.softenDuringSuffixation(root)) {
+                                            if (this.startWithVowelorConsonantDrops() && rootWord && this.softenDuringSuffixation(root, startState)) {
                                                 formation = stem.substring(0, stem.length - 1) + 'ğ';
                                             }
                                             break;
@@ -390,7 +391,7 @@
                                             else {
                                                 //ablak->ablağı, küllük->küllüğü, kitaplık->kitaplığı, evcilik->evciliği
                                                 if (this.startWithVowelorConsonantDrops() && (!rootWord ||
-                                                    (this.softenDuringSuffixation(root) && (!root.isProperNoun() ||
+                                                    (this.softenDuringSuffixation(root, startState) && (!root.isProperNoun() ||
                                                         startState.toString() != "ProperRoot")))) {
                                                     formation = stem.substring(0, stem.length - 1) + 'ğ';
                                                 }

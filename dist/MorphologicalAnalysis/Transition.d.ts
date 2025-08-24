@@ -86,9 +86,10 @@ export declare class Transition {
      * yAbil, yAyaz, yAkal, yAkoy, yAmA, yHcH, HCH, Hr, Hs, Hn, yHn", yHnHz, Ar, Hl").
      *
      * @param root {@link TxtWord} input.
+     * @param startState {@link State} input.
      * @return true if there is softening during suffixation of the given root, false otherwise.
      */
-    softenDuringSuffixation(root: TxtWord): boolean;
+    softenDuringSuffixation(root: TxtWord, startState: State): boolean;
     /**
      * The method is main driving method to accomplish the current transition from one state to another depending on
      * the root form of the word, current value of the word form, and the type of the start state. The method
