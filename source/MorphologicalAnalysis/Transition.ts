@@ -108,17 +108,6 @@ export class Transition {
             currentFsmParse.getWord().getName() != currentFsmParse.getSurfaceForm()) {
             return false;
         }
-        if (currentFsmParse.getVerbAgreement() != null && currentFsmParse.getPossesiveAgreement() != null &&
-            this.withName != undefined) {
-            if (currentFsmParse.getVerbAgreement() == "A3PL" && this.withName == "^DB+VERB+ZERO+PRES+A1SG") {
-                return false;
-            }
-            if (currentFsmParse.getVerbAgreement() == "A3SG" &&
-                (currentFsmParse.getPossesiveAgreement() == "P1SG" ||  currentFsmParse.getPossesiveAgreement() == "P2SG") &&
-                this.withName == "^DB+VERB+ZERO+PRES+A1PL") {
-                return false;
-            }
-        }
         return true;
     }
 
