@@ -174,13 +174,12 @@
          * @param toPos      {@link String} input.
          */
         addSuffix(suffix, form, transition, _with, toPos) {
-            let pos;
             if (suffix.getPos() != undefined) {
-                pos = suffix.getPos();
+                this.pos = suffix.getPos();
             }
             else {
                 if (toPos != undefined) {
-                    pos = toPos;
+                    this.pos = toPos;
                 }
             }
             this.suffixList.push(suffix);

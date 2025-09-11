@@ -172,12 +172,11 @@ export class FsmParse extends MorphologicalParse{
      * @param toPos      {@link String} input.
      */
     addSuffix(suffix: State, form: string, transition: string, _with: string, toPos: string){
-        let pos
         if (suffix.getPos() != undefined) {
-            pos = suffix.getPos();
+            this.pos = suffix.getPos();
         } else {
             if (toPos != undefined) {
-                pos = toPos;
+                this.pos = toPos;
             }
         }
         this.suffixList.push(suffix);
