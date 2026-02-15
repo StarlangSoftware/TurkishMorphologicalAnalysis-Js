@@ -1,130 +1,10 @@
-(function (factory) {
-    if (typeof module === "object" && typeof module.exports === "object") {
-        var v = factory(require, exports);
-        if (v !== undefined) module.exports = v;
-    }
-    else if (typeof define === "function" && define.amd) {
-        define(["require", "exports", "./MorphologicalTag", "nlptoolkit-dictionary/dist/Dictionary/Word"], factory);
-    }
-})(function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.MetamorphicParse = void 0;
-    const MorphologicalTag_1 = require("./MorphologicalTag");
-    const Word_1 = require("nlptoolkit-dictionary/dist/Dictionary/Word");
-    class MetamorphicParse {
-        /**
-         * A constructor of {@link MetamorphicParse} class which creates an {@link ArrayList} metaMorphemeList which has split words
-         * according to +.
-         *
-         * @param parse String to parse.
-         */
-        constructor(parse) {
-            this.metaMorphemeList = new Array();
-            if (parse == "+") {
-                this.root = new Word_1.Word("+");
-            }
-            else {
-                let words = parse.split("+");
-                this.root = new Word_1.Word(words[0]);
-                for (let i = 1; i < words.length; i++) {
-                    this.metaMorphemeList.push(words[i]);
-                }
-            }
-        }
-        /**
-         * The getMetaMorphemeTag method takes a String tag as an input and takes the first char of the tag. If first char
-         * is a punctuation it gets a substring from the tag. And gets the meta morphemes of this tag then adds to the
-         * result {@link Array}.
-         *
-         * @param tag String to get meta morphemes from.
-         * @param parse MorphologicalParse type input.
-         * @return ArrayList type result which holds meta morphemes.
-         */
-        static getMetaMorphemeTag(tag, parse) {
-            let result = new Array();
-            let s = tag.charAt(0);
-            if (Word_1.Word.isPunctuation(s)) {
-                tag = tag.substring(1);
-            }
-            for (let j = 0; j < this.metaMorphemes.length; j++) {
-                if (tag.toLowerCase() == this.metaMorphemes[j].toLowerCase()) {
-                    if (parse != undefined) {
-                        if (parse.containsTag(this.morphotacticTags[j])) {
-                            result.push(this.morphotacticTags[j]);
-                        }
-                    }
-                    else {
-                        result.push(this.morphotacticTags[j]);
-                    }
-                }
-            }
-            return result;
-        }
-        /**
-         * The getter method for Private Word root.
-         *
-         * @return Word type root.
-         */
-        getWord() {
-            return this.root;
-        }
-        /**
-         * The size method returns the size of the metaMorphemeList.
-         *
-         * @return the size of the metaMorphemeList.
-         */
-        size() {
-            return this.metaMorphemeList.length + 1;
-        }
-        /**
-         * The addMetaMorphemeList method splits input String by + and add to the metaMorphemeList.
-         *
-         * @param newTacticSet String to add the metaMorphemeList.
-         */
-        addMetamorphemeList(newTacticSet) {
-            let tactics = newTacticSet.split("+");
-            for (let tactic of tactics) {
-                this.metaMorphemeList.push(tactic);
-            }
-        }
-        /**
-         * The removeMetaMorphemeFromIndex method removes the meta morpheme at given index from metaMorphemeList.
-         *
-         * @param index to remove from metaMorphemeList.
-         */
-        removeMetaMorphemeFromIndex(index) {
-            this.metaMorphemeList.splice(index, this.metaMorphemeList.length - index);
-        }
-        /**
-         * The getMetaMorpheme method gets the meta morpheme at given index.
-         *
-         * @param index is used to get the meta morpheme.
-         * @return metaMorphemeList's corresponding meta morpheme.
-         */
-        getMetaMorpheme(index) {
-            if (index == 0) {
-                return this.root.getName();
-            }
-            else {
-                return this.metaMorphemeList[index - 1];
-            }
-        }
-        /**
-         * Overridden toString method to return resulting meta morphemes in metaMorphemeList.
-         *
-         * @return String result.
-         */
-        toString() {
-            let result = this.root.getName();
-            for (let metaMorpheme of this.metaMorphemeList) {
-                result = result + "+" + metaMorpheme;
-            }
-            return result;
-        }
-    }
-    exports.MetamorphicParse = MetamorphicParse;
-    MetamorphicParse.metaMorphemes = ["Ar", "Ar", "CA", "CA",
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.MetamorphicParse = void 0;
+const MorphologicalTag_1 = require("./MorphologicalTag");
+const Word_1 = require("nlptoolkit-dictionary/dist/Dictionary/Word");
+class MetamorphicParse {
+    static metaMorphemes = ["Ar", "Ar", "CA", "CA",
         "CA", "cAsHnA", "CH", "CHk",
         "DA", "DAn", "DH", "DHk",
         "DHkCA", "DHr", "DHr", "DHr",
@@ -152,7 +32,7 @@
         "ymHs", "ysA", "z", "zsHn",
         "zsHnHz", "zlAr", "yAkal", "yAkoy",
         "yAgor"];
-    MetamorphicParse.morphotacticTags = [
+    static morphotacticTags = [
         /**
          * Aorist Tense : Her hafta sonunda futbol oynarlar.
          */
@@ -590,5 +470,116 @@
          */
         MorphologicalTag_1.MorphologicalTag.REPEAT
     ];
-});
+    metaMorphemeList = new Array();
+    root;
+    /**
+     * The getMetaMorphemeTag method takes a String tag as an input and takes the first char of the tag. If first char
+     * is a punctuation it gets a substring from the tag. And gets the meta morphemes of this tag then adds to the
+     * result {@link Array}.
+     *
+     * @param tag String to get meta morphemes from.
+     * @param parse MorphologicalParse type input.
+     * @return ArrayList type result which holds meta morphemes.
+     */
+    static getMetaMorphemeTag(tag, parse) {
+        let result = new Array();
+        let s = tag.charAt(0);
+        if (Word_1.Word.isPunctuation(s)) {
+            tag = tag.substring(1);
+        }
+        for (let j = 0; j < this.metaMorphemes.length; j++) {
+            if (tag.toLowerCase() == this.metaMorphemes[j].toLowerCase()) {
+                if (parse != undefined) {
+                    if (parse.containsTag(this.morphotacticTags[j])) {
+                        result.push(this.morphotacticTags[j]);
+                    }
+                }
+                else {
+                    result.push(this.morphotacticTags[j]);
+                }
+            }
+        }
+        return result;
+    }
+    /**
+     * The getter method for Private Word root.
+     *
+     * @return Word type root.
+     */
+    getWord() {
+        return this.root;
+    }
+    /**
+     * A constructor of {@link MetamorphicParse} class which creates an {@link ArrayList} metaMorphemeList which has split words
+     * according to +.
+     *
+     * @param parse String to parse.
+     */
+    constructor(parse) {
+        if (parse == "+") {
+            this.root = new Word_1.Word("+");
+        }
+        else {
+            let words = parse.split("+");
+            this.root = new Word_1.Word(words[0]);
+            for (let i = 1; i < words.length; i++) {
+                this.metaMorphemeList.push(words[i]);
+            }
+        }
+    }
+    /**
+     * The size method returns the size of the metaMorphemeList.
+     *
+     * @return the size of the metaMorphemeList.
+     */
+    size() {
+        return this.metaMorphemeList.length + 1;
+    }
+    /**
+     * The addMetaMorphemeList method splits input String by + and add to the metaMorphemeList.
+     *
+     * @param newTacticSet String to add the metaMorphemeList.
+     */
+    addMetamorphemeList(newTacticSet) {
+        let tactics = newTacticSet.split("+");
+        for (let tactic of tactics) {
+            this.metaMorphemeList.push(tactic);
+        }
+    }
+    /**
+     * The removeMetaMorphemeFromIndex method removes the meta morpheme at given index from metaMorphemeList.
+     *
+     * @param index to remove from metaMorphemeList.
+     */
+    removeMetaMorphemeFromIndex(index) {
+        this.metaMorphemeList.splice(index, this.metaMorphemeList.length - index);
+    }
+    /**
+     * The getMetaMorpheme method gets the meta morpheme at given index.
+     *
+     * @param index is used to get the meta morpheme.
+     * @return metaMorphemeList's corresponding meta morpheme.
+     */
+    getMetaMorpheme(index) {
+        if (index == 0) {
+            return this.root.getName();
+        }
+        else {
+            return this.metaMorphemeList[index - 1];
+        }
+    }
+    /**
+     * Overridden toString method to return resulting meta morphemes in metaMorphemeList.
+     *
+     * @return String result.
+     */
+    toString() {
+        let result = this.root.getName();
+        for (let metaMorpheme of this.metaMorphemeList) {
+            result = result + "+" + metaMorpheme;
+        }
+        return result;
+    }
+}
+exports.MetamorphicParse = MetamorphicParse;
 //# sourceMappingURL=MetamorphicParse.js.map

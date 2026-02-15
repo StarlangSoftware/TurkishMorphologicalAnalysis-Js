@@ -1,163 +1,10 @@
-(function (factory) {
-    if (typeof module === "object" && typeof module.exports === "object") {
-        var v = factory(require, exports);
-        if (v !== undefined) module.exports = v;
-    }
-    else if (typeof define === "function" && define.amd) {
-        define(["require", "exports", "./MorphologicalTag"], factory);
-    }
-})(function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.InflectionalGroup = void 0;
-    const MorphologicalTag_1 = require("./MorphologicalTag");
-    class InflectionalGroup {
-        /**
-         * A constructor of {@link InflectionalGroup} class which initializes the IG {@link Array} by parsing given input
-         * String IG by + and calling the getMorphologicalTag method with these substrings. If getMorphologicalTag method returns
-         * a tag, it adds this tag to the IG {@link Array}.
-         *
-         * @param IG String input.
-         */
-        constructor(IG) {
-            this.IG = new Array();
-            let st = IG;
-            while (st.includes("+")) {
-                let morphologicalTag = st.substring(0, st.indexOf("+"));
-                let tag = InflectionalGroup.getMorphologicalTag(morphologicalTag);
-                if (tag != undefined) {
-                    this.IG.push(tag);
-                }
-                st = st.substring(st.indexOf("+") + 1);
-            }
-            let morphologicalTag = st;
-            let tag = InflectionalGroup.getMorphologicalTag(morphologicalTag);
-            if (tag != undefined) {
-                this.IG.push(tag);
-            }
-        }
-        /**
-         * The getMorphologicalTag method takes a String tag as an input and if the input matches with one of the elements of
-         * tags array, it then gets the morphoTags of this tag and returns it.
-         *
-         * @param tag String to get morphoTags from.
-         * @return morphoTags if found, null otherwise.
-         */
-        static getMorphologicalTag(tag) {
-            for (let j = 0; j < this.tags.length; j++) {
-                if (tag.toLowerCase() == this.tags[j].toLowerCase()) {
-                    return this.morphoTags[j];
-                }
-            }
-            return undefined;
-        }
-        /**
-         * The getTag method takes a MorphologicalTag type tag as an input and returns its corresponding tag from tags array.
-         *
-         * @param tag MorphologicalTag type input to find tag from.
-         * @return tag if found, null otherwise.
-         */
-        static getTag(tag) {
-            for (let j = 0; j < this.morphoTags.length; j++) {
-                if (tag == this.morphoTags[j]) {
-                    return this.tags[j];
-                }
-            }
-            return undefined;
-        }
-        /**
-         * Another getTag method which takes index as an input and returns the corresponding tag from IG {@link ArrayList}.
-         *
-         * @param index to get tag.
-         * @return tag at input index.
-         */
-        getTag(index) {
-            return this.IG[index];
-        }
-        /**
-         * The size method returns the size of the IG {@link Array}.
-         *
-         * @return the size of the IG {@link Array}.
-         */
-        size() {
-            return this.IG.length;
-        }
-        /**
-         * Overridden toString method to return resulting tags in IG {@link Array}.
-         *
-         * @return String result.
-         */
-        toString() {
-            let result = InflectionalGroup.getTag(this.IG[0]);
-            for (let i = 1; i < this.IG.length; i++) {
-                result = result + "+" + InflectionalGroup.getTag(this.IG[i]);
-            }
-            return result;
-        }
-        /**
-         * The containsCase method loops through the tags in IG {@link Array} and finds out the tags of the NOMINATIVE,
-         * ACCUSATIVE, DATIVE, LOCATIVE or ABLATIVE cases.
-         *
-         * @return tag which holds the condition.
-         */
-        containsCase() {
-            for (let tag of this.IG) {
-                if (tag == MorphologicalTag_1.MorphologicalTag.NOMINATIVE || tag == MorphologicalTag_1.MorphologicalTag.ACCUSATIVE ||
-                    tag == MorphologicalTag_1.MorphologicalTag.DATIVE || tag == MorphologicalTag_1.MorphologicalTag.LOCATIVE ||
-                    tag == MorphologicalTag_1.MorphologicalTag.ABLATIVE) {
-                    return tag;
-                }
-            }
-            return undefined;
-        }
-        /**
-         * The containsPlural method loops through the tags in IG {@link Array} and checks whether the tags are from
-         * the agreement plural or possessive plural, i.e A1PL, A2PL, A3PL, P1PL, P2PL and P3PL.
-         *
-         * @return true if the tag is plural, false otherwise.
-         */
-        containsPlural() {
-            for (let tag of this.IG) {
-                if (tag == MorphologicalTag_1.MorphologicalTag.A1PL || tag == MorphologicalTag_1.MorphologicalTag.A2PL || tag == MorphologicalTag_1.MorphologicalTag.A3PL ||
-                    tag == MorphologicalTag_1.MorphologicalTag.P1PL || tag == MorphologicalTag_1.MorphologicalTag.P2PL || tag == MorphologicalTag_1.MorphologicalTag.P3PL) {
-                    return true;
-                }
-            }
-            return false;
-        }
-        /**
-         * The containsTag method takes a MorphologicalTag type tag as an input and loops through the tags in
-         * IG {@link Array} and returns true if the input matches with on of the tags in the IG.
-         *
-         * @param tag MorphologicalTag type input to search for.
-         * @return true if tag matches with the tag in IG, false otherwise.
-         */
-        containsTag(tag) {
-            for (let currentTag of this.IG) {
-                if (currentTag == tag) {
-                    return true;
-                }
-            }
-            return false;
-        }
-        /**
-         * The containsPossessive method loops through the tags in IG {@link Array} and returns true if the tag in IG is
-         * one of the possessives: P1PL, P1SG, P2PL, P2SG, P3PL AND P3SG.
-         *
-         * @return true if it contains possessive tag, false otherwise.
-         */
-        containsPossessive() {
-            for (let tag of this.IG) {
-                if (tag == MorphologicalTag_1.MorphologicalTag.P1PL || tag == MorphologicalTag_1.MorphologicalTag.P1SG || tag == MorphologicalTag_1.MorphologicalTag.P2PL ||
-                    tag == MorphologicalTag_1.MorphologicalTag.P2SG || tag == MorphologicalTag_1.MorphologicalTag.P3PL || tag == MorphologicalTag_1.MorphologicalTag.P3SG) {
-                    return true;
-                }
-            }
-            return false;
-        }
-    }
-    exports.InflectionalGroup = InflectionalGroup;
-    InflectionalGroup.tags = ["NOUN", "ADV", "ADJ", "VERB", "A1SG",
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.InflectionalGroup = void 0;
+const MorphologicalTag_1 = require("./MorphologicalTag");
+class InflectionalGroup {
+    IG = new Array();
+    static tags = ["NOUN", "ADV", "ADJ", "VERB", "A1SG",
         "A2SG", "A3SG", "A1PL", "A2PL", "A3PL",
         "P1SG", "P2SG", "P3SG", "P1PL", "P2PL",
         "P3PL", "PROP", "PNON", "NOM", "WITH",
@@ -184,7 +31,7 @@
         "DIST", "ADAMANTLY", "PERCENT", "WITHOUTBEINGABLETOHAVEDONESO", "DIM",
         "PERS", "FRACTION", "HASHTAG", "EMAIL", "DATE",
         "CODE", "METRIC", "POL", "URGE"];
-    InflectionalGroup.morphoTags = [MorphologicalTag_1.MorphologicalTag.NOUN, MorphologicalTag_1.MorphologicalTag.ADVERB, MorphologicalTag_1.MorphologicalTag.ADJECTIVE,
+    static morphoTags = [MorphologicalTag_1.MorphologicalTag.NOUN, MorphologicalTag_1.MorphologicalTag.ADVERB, MorphologicalTag_1.MorphologicalTag.ADJECTIVE,
         MorphologicalTag_1.MorphologicalTag.VERB, MorphologicalTag_1.MorphologicalTag.A1SG, MorphologicalTag_1.MorphologicalTag.A2SG, MorphologicalTag_1.MorphologicalTag.A3SG, MorphologicalTag_1.MorphologicalTag.A1PL,
         MorphologicalTag_1.MorphologicalTag.A2PL, MorphologicalTag_1.MorphologicalTag.A3PL, MorphologicalTag_1.MorphologicalTag.P1SG, MorphologicalTag_1.MorphologicalTag.P2SG, MorphologicalTag_1.MorphologicalTag.P3SG, MorphologicalTag_1.MorphologicalTag.P1PL,
         MorphologicalTag_1.MorphologicalTag.P2PL, MorphologicalTag_1.MorphologicalTag.P3PL, MorphologicalTag_1.MorphologicalTag.PROPERNOUN, MorphologicalTag_1.MorphologicalTag.PNON, MorphologicalTag_1.MorphologicalTag.NOMINATIVE,
@@ -211,5 +58,148 @@
         MorphologicalTag_1.MorphologicalTag.DISTRIBUTIVE, MorphologicalTag_1.MorphologicalTag.ADAMANTLY, MorphologicalTag_1.MorphologicalTag.PERCENT, MorphologicalTag_1.MorphologicalTag.WITHOUTBEINGABLETOHAVEDONESO, MorphologicalTag_1.MorphologicalTag.DIMENSION,
         MorphologicalTag_1.MorphologicalTag.PERSONALPRONOUN, MorphologicalTag_1.MorphologicalTag.FRACTION, MorphologicalTag_1.MorphologicalTag.HASHTAG, MorphologicalTag_1.MorphologicalTag.EMAIL, MorphologicalTag_1.MorphologicalTag.DATE,
         MorphologicalTag_1.MorphologicalTag.CODE, MorphologicalTag_1.MorphologicalTag.METRIC, MorphologicalTag_1.MorphologicalTag.POLITE, MorphologicalTag_1.MorphologicalTag.URGE];
-});
+    /**
+     * The getMorphologicalTag method takes a String tag as an input and if the input matches with one of the elements of
+     * tags array, it then gets the morphoTags of this tag and returns it.
+     *
+     * @param tag String to get morphoTags from.
+     * @return morphoTags if found, null otherwise.
+     */
+    static getMorphologicalTag(tag) {
+        for (let j = 0; j < this.tags.length; j++) {
+            if (tag.toLowerCase() == this.tags[j].toLowerCase()) {
+                return this.morphoTags[j];
+            }
+        }
+        return undefined;
+    }
+    /**
+     * The getTag method takes a MorphologicalTag type tag as an input and returns its corresponding tag from tags array.
+     *
+     * @param tag MorphologicalTag type input to find tag from.
+     * @return tag if found, null otherwise.
+     */
+    static getTag(tag) {
+        for (let j = 0; j < this.morphoTags.length; j++) {
+            if (tag == this.morphoTags[j]) {
+                return this.tags[j];
+            }
+        }
+        return undefined;
+    }
+    /**
+     * A constructor of {@link InflectionalGroup} class which initializes the IG {@link Array} by parsing given input
+     * String IG by + and calling the getMorphologicalTag method with these substrings. If getMorphologicalTag method returns
+     * a tag, it adds this tag to the IG {@link Array}.
+     *
+     * @param IG String input.
+     */
+    constructor(IG) {
+        let st = IG;
+        while (st.includes("+")) {
+            let morphologicalTag = st.substring(0, st.indexOf("+"));
+            let tag = InflectionalGroup.getMorphologicalTag(morphologicalTag);
+            if (tag != undefined) {
+                this.IG.push(tag);
+            }
+            st = st.substring(st.indexOf("+") + 1);
+        }
+        let morphologicalTag = st;
+        let tag = InflectionalGroup.getMorphologicalTag(morphologicalTag);
+        if (tag != undefined) {
+            this.IG.push(tag);
+        }
+    }
+    /**
+     * Another getTag method which takes index as an input and returns the corresponding tag from IG {@link ArrayList}.
+     *
+     * @param index to get tag.
+     * @return tag at input index.
+     */
+    getTag(index) {
+        return this.IG[index];
+    }
+    /**
+     * The size method returns the size of the IG {@link Array}.
+     *
+     * @return the size of the IG {@link Array}.
+     */
+    size() {
+        return this.IG.length;
+    }
+    /**
+     * Overridden toString method to return resulting tags in IG {@link Array}.
+     *
+     * @return String result.
+     */
+    toString() {
+        let result = InflectionalGroup.getTag(this.IG[0]);
+        for (let i = 1; i < this.IG.length; i++) {
+            result = result + "+" + InflectionalGroup.getTag(this.IG[i]);
+        }
+        return result;
+    }
+    /**
+     * The containsCase method loops through the tags in IG {@link Array} and finds out the tags of the NOMINATIVE,
+     * ACCUSATIVE, DATIVE, LOCATIVE or ABLATIVE cases.
+     *
+     * @return tag which holds the condition.
+     */
+    containsCase() {
+        for (let tag of this.IG) {
+            if (tag == MorphologicalTag_1.MorphologicalTag.NOMINATIVE || tag == MorphologicalTag_1.MorphologicalTag.ACCUSATIVE ||
+                tag == MorphologicalTag_1.MorphologicalTag.DATIVE || tag == MorphologicalTag_1.MorphologicalTag.LOCATIVE ||
+                tag == MorphologicalTag_1.MorphologicalTag.ABLATIVE) {
+                return tag;
+            }
+        }
+        return undefined;
+    }
+    /**
+     * The containsPlural method loops through the tags in IG {@link Array} and checks whether the tags are from
+     * the agreement plural or possessive plural, i.e A1PL, A2PL, A3PL, P1PL, P2PL and P3PL.
+     *
+     * @return true if the tag is plural, false otherwise.
+     */
+    containsPlural() {
+        for (let tag of this.IG) {
+            if (tag == MorphologicalTag_1.MorphologicalTag.A1PL || tag == MorphologicalTag_1.MorphologicalTag.A2PL || tag == MorphologicalTag_1.MorphologicalTag.A3PL ||
+                tag == MorphologicalTag_1.MorphologicalTag.P1PL || tag == MorphologicalTag_1.MorphologicalTag.P2PL || tag == MorphologicalTag_1.MorphologicalTag.P3PL) {
+                return true;
+            }
+        }
+        return false;
+    }
+    /**
+     * The containsTag method takes a MorphologicalTag type tag as an input and loops through the tags in
+     * IG {@link Array} and returns true if the input matches with on of the tags in the IG.
+     *
+     * @param tag MorphologicalTag type input to search for.
+     * @return true if tag matches with the tag in IG, false otherwise.
+     */
+    containsTag(tag) {
+        for (let currentTag of this.IG) {
+            if (currentTag == tag) {
+                return true;
+            }
+        }
+        return false;
+    }
+    /**
+     * The containsPossessive method loops through the tags in IG {@link Array} and returns true if the tag in IG is
+     * one of the possessives: P1PL, P1SG, P2PL, P2SG, P3PL AND P3SG.
+     *
+     * @return true if it contains possessive tag, false otherwise.
+     */
+    containsPossessive() {
+        for (let tag of this.IG) {
+            if (tag == MorphologicalTag_1.MorphologicalTag.P1PL || tag == MorphologicalTag_1.MorphologicalTag.P1SG || tag == MorphologicalTag_1.MorphologicalTag.P2PL ||
+                tag == MorphologicalTag_1.MorphologicalTag.P2SG || tag == MorphologicalTag_1.MorphologicalTag.P3PL || tag == MorphologicalTag_1.MorphologicalTag.P3SG) {
+                return true;
+            }
+        }
+        return false;
+    }
+}
+exports.InflectionalGroup = InflectionalGroup;
 //# sourceMappingURL=InflectionalGroup.js.map
