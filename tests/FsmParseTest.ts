@@ -7,7 +7,7 @@ describe('FsmParseTest', function() {
         let parse1 = fsm.morphologicalAnalysis("açılır").getFsmParse(1);
         let parse2 = fsm.morphologicalAnalysis("koparılarak").getFsmParse(0);
         let parse3 = fsm.morphologicalAnalysis("toplama").getFsmParse(0);
-        let parse4 = fsm.morphologicalAnalysis("değerlendirmede").getFsmParse(0);
+        let parse4 = fsm.morphologicalAnalysis("değerlendirmede").getFsmParse(1);
         let parse5 = fsm.morphologicalAnalysis("soruşturmasının").getFsmParse(0);
         let parse6 = fsm.morphologicalAnalysis("karşılaştırmalı").getFsmParse(1);
         let parse7 = fsm.morphologicalAnalysis("esaslarını").getFsmParse(0);

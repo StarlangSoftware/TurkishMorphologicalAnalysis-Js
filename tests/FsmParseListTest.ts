@@ -27,7 +27,7 @@ describe('FsmParseTest', function() {
             assert.strictEqual(2, parse1.size());
             assert.strictEqual(2, parse2.size());
             assert.strictEqual(6, parse3.size());
-            assert.strictEqual(4, parse4.size());
+            assert.strictEqual(5, parse4.size());
             assert.strictEqual(5, parse5.size());
             assert.strictEqual(12, parse6.size());
             assert.strictEqual(8, parse7.size());
@@ -81,7 +81,7 @@ describe('FsmParseTest', function() {
             assert.strictEqual(1, parse1.constructParseListForDifferentRootWithPos().length);
             assert.strictEqual(2, parse2.constructParseListForDifferentRootWithPos().length);
             assert.strictEqual(5, parse3.constructParseListForDifferentRootWithPos().length);
-            assert.strictEqual(4, parse4.constructParseListForDifferentRootWithPos().length);
+            assert.strictEqual(5, parse4.constructParseListForDifferentRootWithPos().length);
             assert.strictEqual(5, parse5.constructParseListForDifferentRootWithPos().length);
             assert.strictEqual(7, parse6.constructParseListForDifferentRootWithPos().length);
             assert.strictEqual(2, parse7.constructParseListForDifferentRootWithPos().length);
@@ -91,7 +91,7 @@ describe('FsmParseTest', function() {
         it('testParsesWithoutPrefixAndSuffix', function() {
             assert.strictEqual("P3SG+NOM$PNON+ACC", parse10.parsesWithoutPrefixAndSuffix());
             assert.strictEqual("A3PL+P3PL+NOM$A3PL+P3SG+NOM$A3PL+PNON+ACC$A3SG+P3PL+NOM", parse11.parsesWithoutPrefixAndSuffix());
-            assert.strictEqual("DET$PRON+DEMONSP+A3SG+PNON+NOM$PRON+PERS+A3SG+PNON+NOM", parse12.parsesWithoutPrefixAndSuffix());
+            assert.strictEqual("ADJ$DET$PRON+DEMONSP+A3SG+PNON+NOM$PRON+PERS+A3SG+PNON+NOM", parse12.parsesWithoutPrefixAndSuffix());
             assert.strictEqual("NOUN+A3SG+P3SG+NOM$NOUN^DB+ADJ+ALMOST", parse13.parsesWithoutPrefixAndSuffix());
         });
     });
